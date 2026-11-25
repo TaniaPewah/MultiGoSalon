@@ -1,13 +1,22 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { colorToSign } from '@multigo/shared';
+import { Avatar } from '../components/Avatar';
 import { GoBoard } from '../components/GoBoard';
 import { useStore } from '../store';
 
 export function PracticeView() {
-  const { problems, practice, actions } = useStore();
+  const { me, problems, practice, actions } = useStore();
   const listRef = useRef<HTMLOListElement>(null);
+  const [solvedIds, setSolvedIds] = useState<string[]>([]);
   const currentIndex = practice ? problems.findIndex((p) => p.id === practice.problemId) : -1;
   const next = currentIndex >= 0 && currentIndex < problems.length - 1 ? problems[currentIndex + 1] : null;
+  const nextUnsolved = problems.findIndex((p) => !solvedIds.includes(p.id));
+  const standingIndex = nextUnsolved === -1 ? Math.max(problems.length - 1, 0) : nextUnsolved;
+
+  useEffect(() => {
+    if (practice?.status !== 'solved') return;
+    setSolvedIds((ids) => (ids.includes(practice.problemId) ? ids : [...ids, practice.problemId]));
+  }, [practice?.status, practice?.problemId]);
 
   useEffect(() => {
     const list = listRef.current;
@@ -36,19 +45,26 @@ export function PracticeView() {
           <p className="muted">Graded from intro to hard. Black to play. Find the move that captures, lives or kills.</p>
           {problems.length === 0 && <p className="muted">Loading problems…</p>}
           <ol className="path" ref={listRef}>
-            {problems.map((p, i) => (
-              <li key={p.id} className="path__stop">
-                <button
-                  className={['path__node', practice?.problemId === p.id ? 'problem--active' : ''].join(' ')}
-                  onClick={() => actions.startProblem(p.id)}
-                  data-testid={`problem-${p.id}`}
-                  aria-label={p.title}
-                >
-                  {i + 1}
-                </button>
-                <span className="path__label">{p.title}</span>
-              </li>
-            ))}
+            {problems.map((p, i) => {
+              const playable = i === nextUnsolved;
+              const solved = solvedIds.includes(p.id);
+              return (
+                <li key={p.id} className="path__stop">
+                  <button
+                    className={['path__node', playable ? 'problem--active' : '', solved ? 'path__node--solved' : ''].join(' ')}
+                    onClick={() => {
+                      if (playable) actions.startProblem(p.id);
+                    }}
+                    data-testid={`problem-${p.id}`}
+                    aria-label={p.title}
+                    disabled={!playable}
+                  >
+                    {i === standingIndex && me ? <Avatar character={me.character} size={32} /> : i + 1}
+                  </button>
+                  <span className="path__label">{p.title}</span>
+                </li>
+              );
+            })}
           </ol>
         </aside>
 
@@ -77,7 +93,7 @@ export function PracticeView() {
                 <button className="btn btn--secondary" onClick={actions.resetProblem} data-testid="practice-reset">
                   Reset
                 </button>
-                {next && (
+                {next && nextUnsolved === currentIndex + 1 && (
                   <button className="btn btn--primary practice__next" onClick={() => actions.startProblem(next.id)} data-testid="practice-next">
                     Next problem →
                   </button>
