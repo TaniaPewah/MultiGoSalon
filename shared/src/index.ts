@@ -40,7 +40,7 @@ export interface ClockState {
   at: number;
 }
 
-export type GamePhase = 'playing' | 'finished';
+export type GamePhase = 'playing' | 'scoring' | 'finished';
 
 export type GameEndReason = 'resign' | 'timeout' | 'score' | 'repetition' | 'abandon';
 
@@ -91,6 +91,8 @@ export interface GameState {
   territory: Sign[][] | null;
   /** Point that is currently illegal because of simple ko, if any. */
   koPoint: Vertex | null;
+  /** Dead-stone proposals during scoring. Null means that player has not sent a set yet. */
+  dead: { black: Vertex[] | null; white: Vertex[] | null };
 }
 
 export type PlayerStatus = 'idle' | 'queued' | 'playing' | 'practice' | 'spectating';
@@ -184,6 +186,7 @@ export interface ClientToServerEvents {
   'queue:leave': () => void;
   'game:place': (payload: { gameId: string; x: number; y: number }) => void;
   'game:pass': (payload: { gameId: string }) => void;
+  'game:dead': (payload: { gameId: string; points: Vertex[] }) => void;
   'game:resign': (payload: { gameId: string }) => void;
   'game:leave': (payload: { gameId: string }) => void;
   'game:unwatch': (payload: { gameId: string }) => void;

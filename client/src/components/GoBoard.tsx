@@ -12,6 +12,9 @@ interface Props {
   koPoint?: Vertex | null;
   territory?: Sign[][] | null;
   onPlace?: (x: number, y: number) => void;
+  /** Stones the player has selected as dead, in board coordinates. */
+  marked?: Vertex[];
+  onMark?: (x: number, y: number) => void;
   showCoordinates?: boolean;
   className?: string;
 }
@@ -44,6 +47,8 @@ export function GoBoard({
   koPoint,
   territory,
   onPlace,
+  marked = [],
+  onMark,
   showCoordinates = true,
   className,
 }: Props) {
@@ -74,7 +79,8 @@ export function GoBoard({
     [extent, margin, size],
   );
 
-  const interactive = hoverSign !== null && !!onPlace;
+  const marking = !!onMark;
+  const interactive = marking || (hoverSign !== null && !!onPlace);
 
   const handleMove = (evt: React.PointerEvent<SVGSVGElement>) => {
     if (!interactive) return;
@@ -87,6 +93,10 @@ export function GoBoard({
     const d = locate(evt);
     if (!d) return;
     const [bx, by] = toBoard(d[0], d[1]);
+    if (marking) {
+      if (board[by][bx] !== 0) onMark?.(bx, by);
+      return;
+    }
     if (board[by][bx] !== 0) return;
     onPlace?.(bx, by);
   };
@@ -167,7 +177,7 @@ export function GoBoard({
       {territory &&
         territory.flatMap((row, by) =>
           row.map((owner, bx) => {
-            if (owner === 0 || board[by][bx] !== 0) return null;
+            if (owner === 0 || board[by][bx] === owner) return null;
             const [dx, dy] = toDisplay(bx, by);
             return (
               <rect
@@ -209,6 +219,11 @@ export function GoBoard({
       {koDisplay && (
         <rect x={koDisplay[0] - 0.25} y={koDisplay[1] - 0.25} width={0.5} height={0.5} className="go-board__ko" />
       )}
+
+      {marked.map(([bx, by]) => {
+        const [dx, dy] = toDisplay(bx, by);
+        return <circle key={`dead-${bx}-${by}`} cx={dx} cy={dy} r={0.22} className="go-board__dead" data-testid="dead-mark" />;
+      })}
 
       {showHover && hover && (
         <circle

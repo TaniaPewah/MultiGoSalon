@@ -47,6 +47,7 @@ interface Store {
     place: (x: number, y: number) => void;
     pass: () => void;
     resign: () => void;
+    agreeDead: (points: [number, number][]) => void;
     leaveGame: () => void;
     openPractice: () => void;
     startProblem: (id: string) => void;
@@ -254,6 +255,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       resign: () => {
         const g = lastGameRef.current;
         if (g) socket.emit('game:resign', { gameId: g.id });
+      },
+      agreeDead: (points) => {
+        const g = lastGameRef.current;
+        if (g) socket.emit('game:dead', { gameId: g.id, points });
       },
       leaveGame: () => {
         const g = lastGameRef.current;

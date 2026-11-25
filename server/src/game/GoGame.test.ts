@@ -176,6 +176,64 @@ describe('ko', () => {
 });
 
 describe('passing, resignation and scoring', () => {
+  it('two passes wait for both players to agree before scoring', () => {
+    const g = newGame(9);
+    const moves: ([number, number] | 'pass')[] = [];
+    for (let y = 0; y < 9; y++) {
+      moves.push([4, y]);
+      moves.push([5, y]);
+    }
+    play(g, moves);
+    play(g, ['pass', 'pass']);
+    expect(g.phase).toBe('scoring');
+    expect(g.result).toBeNull();
+
+    expect(g.markDead('black', [], 2).ok).toBe(true);
+    expect(g.phase).toBe('scoring');
+    expect(g.markDead('white', [], 2).ok).toBe(true);
+    expect(g.phase).toBe('finished');
+    expect(g.result?.reason).toBe('score');
+    expect(g.result?.score?.black).toBe(45);
+    expect(g.result?.score?.white).toBe(43.5);
+    expect(g.result?.winner).toBe('black');
+  });
+
+  it('counts a dead stone only after both players mark the same stone', () => {
+    const g = newGame(5);
+    play(g, [
+      [1, 0],
+      [0, 0],
+      'pass',
+      'pass',
+    ]);
+    expect(g.phase).toBe('scoring');
+    expect(g.markDead('black', [[0, 0]], 2).ok).toBe(true);
+    expect(g.markDead('white', [[0, 0]], 2).ok).toBe(true);
+    expect(g.phase).toBe('finished');
+    expect(g.result?.score?.whiteStones).toBe(0);
+    expect(g.result?.score?.black).toBe(25);
+    expect(g.result?.score?.white).toBe(7.5);
+  });
+
+  it('returns to play when the dead-stone marks differ and does not score', () => {
+    const g = newGame(5);
+    play(g, [
+      [1, 0],
+      [0, 0],
+      'pass',
+      'pass',
+    ]);
+    const disagreed = g.markDead('black', [[0, 0]], 2);
+    expect(disagreed.ok).toBe(true);
+    const white = g.markDead('white', [], 3);
+    expect(white.ok).toBe(true);
+    if (white.ok) expect(white.resumed).toBe(true);
+    expect(g.phase).toBe('playing');
+    expect(g.result).toBeNull();
+    expect(g.turn).toBe('black');
+    expect(g.place('black', 2, 2, 4).ok).toBe(true);
+  });
+
   it('two consecutive passes end the game with area scoring + komi', () => {
     const g = newGame(9);
     // Black wall on column 4 from top to bottom, white stones at column 6.
@@ -187,6 +245,9 @@ describe('passing, resignation and scoring', () => {
     }
     play(g, moves);
     play(g, ['pass', 'pass']);
+    expect(g.phase).toBe('scoring');
+    expect(g.markDead('black', [], 2).ok).toBe(true);
+    expect(g.markDead('white', [], 2).ok).toBe(true);
     expect(g.phase).toBe('finished');
     expect(g.result?.reason).toBe('score');
     // Black: 9 stones + 36 territory = 45; White: 9 stones + 27 territory + 7.5 komi = 43.5.

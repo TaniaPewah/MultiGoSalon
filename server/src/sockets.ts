@@ -344,6 +344,20 @@ export function registerSockets(io: IO, opts?: { reconnectGraceMs?: number; stor
       if (!res.ok) socket.emit('game:error', res.error);
     });
 
+    socket.on('game:dead', ({ gameId, points }) => {
+      const id = requirePlayerId();
+      if (!id) return;
+      const marks = Array.isArray(points) ? points.map((point) => [Number(point?.[0]), Number(point?.[1])] as [number, number]) : [];
+      const res = games.markDead(id, String(gameId), marks);
+      if (!res.ok) socket.emit('game:error', res.error);
+      else if (res.resumed) {
+        io.to(roomOf(String(gameId))).emit('game:error', {
+          code: 'invalid',
+          message: 'Dead stones do not match. Play continues.',
+        });
+      }
+    });
+
     socket.on('game:leave', ({ gameId }) => {
       const id = requirePlayerId();
       if (!id) return;

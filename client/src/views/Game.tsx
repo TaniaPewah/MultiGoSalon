@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { colorToSign, opponentOf, type Color, type PlayerInfo } from '@multigo/shared';
+import { colorToSign, opponentOf, type Color, type PlayerInfo, type Vertex } from '@multigo/shared';
 import { Avatar } from '../components/Avatar';
 import { Clock } from '../components/Clock';
 import { GoBoard } from '../components/GoBoard';
@@ -8,6 +8,7 @@ import { useStore, type TimedGameState } from '../store';
 export function GameView() {
   const { me, game, actions } = useStore();
   const [confirmResign, setConfirmResign] = useState(false);
+  const [draftDead, setDraftDead] = useState<Vertex[]>([]);
 
   if (!me || !game) {
     return (
@@ -27,13 +28,14 @@ export function GameView() {
   const flipped = perspective === 'white';
 
   const statusText = (() => {
+    if (state.phase === 'scoring') return 'Mark the dead stones. The score waits until you both agree.';
     if (state.phase === 'finished' && state.result) return resultText(state, me.id);
     if (isSpectator) {
       return `Watching · ${state.turn === 'black' ? 'Black' : 'White'} to play.`;
     }
     if (state.lastMove === 'pass') {
       const passer = opponentOf(state.turn);
-      return `${nameOf(state.players[passer], me.id)} passed. ${isMyTurn ? 'Pass again to end the game, or keep playing.' : ''}`;
+      return `${nameOf(state.players[passer], me.id)} passed. ${isMyTurn ? 'Pass again to mark dead stones, or keep playing.' : ''}`;
     }
     return isMyTurn ? 'Your move.' : `Waiting for ${nameOf(state.players[state.turn], me.id)}…`;
   })();
@@ -65,14 +67,41 @@ export function GameView() {
             lastMove={Array.isArray(state.lastMove) ? state.lastMove : null}
             koPoint={state.koPoint}
             territory={state.territory}
-            onPlace={isSpectator ? undefined : actions.place}
+            marked={state.phase === 'scoring' ? draftDead : []}
+            onMark={
+              state.phase === 'scoring' && myColor
+                ? (x, y) =>
+                    setDraftDead((current) =>
+                      current.some((point) => point[0] === x && point[1] === y)
+                        ? current.filter((point) => point[0] !== x || point[1] !== y)
+                        : [...current, [x, y]],
+                    )
+                : undefined
+            }
+            onPlace={isSpectator || state.phase !== 'playing' ? undefined : actions.place}
           />
         </div>
 
         <PlayerCard game={game} color={perspective} meId={me.id} position="bottom" />
 
         <div className="game__controls">
-          {state.phase === 'playing' && myColor && !isSpectator ? (
+          {state.phase === 'scoring' && myColor ? (
+            <>
+              <button
+                className="btn btn--primary"
+                data-testid="agree-dead"
+                onClick={() => {
+                  actions.agreeDead(draftDead);
+                  setDraftDead([]);
+                }}
+              >
+                These stones are dead
+              </button>
+              <button className="btn btn--ghost" onClick={() => actions.resign()} data-testid="resign-button">
+                Resign
+              </button>
+            </>
+          ) : state.phase === 'playing' && myColor && !isSpectator ? (
             <>
               <button className="btn btn--secondary" onClick={actions.pass} disabled={!isMyTurn} data-testid="pass-button">
                 Pass

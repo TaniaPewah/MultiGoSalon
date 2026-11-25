@@ -108,4 +108,4 @@ client/src/views/          Login, Salon, Game, Practice
 
 ## Not in v1
 
-Chat, dead-stone marking before scoring, handicap games, and a smarter rating system.
+Chat, handicap games, and a smarter rating system.

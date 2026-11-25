@@ -11,8 +11,8 @@ export interface AreaScore {
  * one point for its owner, and every empty region that touches only one colour
  * counts for that colour. Regions touching both colours (or nothing) are neutral.
  *
- * Stones that are "dead" in a human sense are NOT removed automatically: players
- * are expected to capture them before passing, exactly as under Tromp-Taylor rules.
+ * Dead stones are removed by the caller before scoring, once both players have
+ * marked the same stones. A stone left on the board counts for its owner.
  */
 export function scoreArea(board: Sign[][], komi: number): AreaScore {
   const size = board.length;
