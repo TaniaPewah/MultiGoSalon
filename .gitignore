@@ -5,3 +5,5 @@ dist/
 .env
 terminals/
 pr-body.md
+test-results/
+tests/artifacts/
