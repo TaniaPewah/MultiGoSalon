@@ -1,0 +1,3 @@
+# 18:00 UTC every day. Files up to 10 approved evening items.
+# Installed for the dev user with: crontab ops/evening-issues.cron
+0 18 * * * cd /home/dev/projects/MultiGoSalon && /usr/bin/node scripts/open-evening-issues.mjs --batch evening --limit 10 >> /home/dev/.local/state/multigo/evening-issues.log 2>&1
