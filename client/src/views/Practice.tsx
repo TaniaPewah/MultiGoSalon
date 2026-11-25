@@ -68,17 +68,17 @@ export function PracticeView() {
                   onPlace={actions.practiceMove}
                 />
               </div>
-              <div className={`practice__message practice__message--${practice.status}`} data-testid="practice-message" aria-live="polite">
-                {practice.status === 'solved' && <strong>Correct! </strong>}
-                {practice.status === 'failed' && <strong>Not quite. </strong>}
-                {practice.message}
-              </div>
-              <div className="game__controls">
+              <div className="practice__answer">
+                <div className={`practice__message practice__message--${practice.status}`} data-testid="practice-message" aria-live="polite">
+                  {practice.status === 'solved' && <strong>Correct! </strong>}
+                  {practice.status === 'failed' && <strong>Not quite. </strong>}
+                  {practice.message}
+                </div>
                 <button className="btn btn--secondary" onClick={actions.resetProblem} data-testid="practice-reset">
                   Reset
                 </button>
                 {next && (
-                  <button className="btn btn--primary" onClick={() => actions.startProblem(next.id)} data-testid="practice-next">
+                  <button className="btn btn--primary practice__next" onClick={() => actions.startProblem(next.id)} data-testid="practice-next">
                     Next problem →
                   </button>
                 )}
