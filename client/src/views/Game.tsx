@@ -209,6 +209,10 @@ function resultText(state: TimedGameState['state'], meId: string): string {
     abandon: 'because the opponent left',
   };
   if (r.winner === null) return `Draw ${reason[r.reason]}.`;
+  if (r.reason === 'timeout') {
+    const loser = state.players[r.winner === 'black' ? 'white' : 'black'];
+    return loser.id === meId ? 'You lost on time.' : `${loser.name} lost on time.`;
+  }
   const winner = state.players[r.winner];
   const isMe = winner.id === meId;
   return `${isMe ? 'You win' : `${winner.name} wins`} ${reason[r.reason]}.`;
