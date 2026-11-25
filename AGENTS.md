@@ -49,7 +49,15 @@ Approved queue: `docs/issue-queue.json`. The 18:00 UTC job files up to 10 unfile
 
 # Autopilot
 
-Autopilot is on only when the person in this conversation explicitly turns it on. Then work one issue through without stopping to ask. Read the skill for the current step:
+Autopilot is on only when the person in this conversation explicitly turns it on. Then work one issue through without stopping to ask. Read the skill for the current step.
+
+When autopilot is on and there are no open issues, run the project-improvement script, then fix all open issues:
+
+```
+node scripts/open-evening-issues.mjs --batch evening --limit 10
+```
+
+That files up to 10 approved evening items. Then take every issue that is open, one at a time: relevance check, its own worktree, and its own pull request or Linear comment. Finish one before starting the next. Do not bundle them. If the script opens nothing, stop.
 
 1. Relevance check, then `scripts/new-worktree.sh <github-issue-number>`.
 2. A bug goes through `.cursor/skills/diagnosing-bugs/SKILL.md`. Implementation goes through `.cursor/skills/tdd/SKILL.md`. `.cursor/skills/implement/SKILL.md` drives both.

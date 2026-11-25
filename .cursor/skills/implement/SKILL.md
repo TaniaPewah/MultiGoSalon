@@ -9,6 +9,8 @@ description: >-
 
 Adapted from Matt Pocock's `implement` skill (MIT). One issue, one worktree, one pull request.
 
+When autopilot is on and the repo has no open GitHub issues, the workflow in `AGENTS.md` runs `scripts/open-evening-issues.mjs --batch evening --limit 10`, then fixes those issues one at a time with the steps below.
+
 1. Fetch the GitHub issue and state its title. If the number is ambiguous, stop.
 2. Relevance check. Update the issue when part of it is already done. Stop when none of it remains.
 3. `scripts/new-worktree.sh <github-issue-number>` and do the rest of the work in that directory.
