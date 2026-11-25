@@ -632,10 +632,15 @@ select {
   stroke-width: 0.07;
 }
 .go-board__ko {
-  fill: none;
+  fill: rgba(217, 79, 112, 0.45);
   stroke: #d94f70;
-  stroke-width: 0.06;
-  rx: 0.08;
+  stroke-width: 0.08;
+}
+.go-board__ko-label {
+  fill: #6d2038;
+  font-size: 0.34px;
+  font-weight: 800;
+  pointer-events: none;
 }
 .go-board__territory--black {
   fill: #1c1826;

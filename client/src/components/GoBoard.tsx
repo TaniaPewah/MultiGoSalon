@@ -12,6 +12,7 @@ interface Props {
   koPoint?: Vertex | null;
   territory?: Sign[][] | null;
   onPlace?: (x: number, y: number) => void;
+  onKo?: (x: number, y: number) => void;
   /** Stones the player has selected as dead, in board coordinates. */
   marked?: Vertex[];
   onMark?: (x: number, y: number) => void;
@@ -47,6 +48,7 @@ export function GoBoard({
   koPoint,
   territory,
   onPlace,
+  onKo,
   marked = [],
   onMark,
   showCoordinates = true,
@@ -93,6 +95,10 @@ export function GoBoard({
     const d = locate(evt);
     if (!d) return;
     const [bx, by] = toBoard(d[0], d[1]);
+    if (koPoint && koPoint[0] === bx && koPoint[1] === by) {
+      onKo?.(bx, by);
+      return;
+    }
     if (marking) {
       if (board[by][bx] !== 0) onMark?.(bx, by);
       return;
@@ -217,7 +223,12 @@ export function GoBoard({
       )}
 
       {koDisplay && (
-        <rect x={koDisplay[0] - 0.25} y={koDisplay[1] - 0.25} width={0.5} height={0.5} className="go-board__ko" />
+        <g data-testid="ko-point">
+          <rect x={koDisplay[0] - 0.42} y={koDisplay[1] - 0.42} width={0.84} height={0.84} rx={0.12} className="go-board__ko" />
+          <text x={koDisplay[0]} y={koDisplay[1] + 0.14} textAnchor="middle" className="go-board__ko-label">
+            ko
+          </text>
+        </g>
       )}
 
       {marked.map(([bx, by]) => {
