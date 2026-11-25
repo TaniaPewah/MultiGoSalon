@@ -26,7 +26,9 @@ Night-agent limits, labels, and the issue body template are in [reference.md](re
 
 ## Before you create anything
 
-Stop and ask the person when any of these are unknown:
+Do not open an issue by hand, and do not invent missing fields, unless autopilot mode is on (triggered by the human). Autopilot is on only when the person in this conversation explicitly turns it on. Then fill the missing fields from the repo and the request, record what you filled, and open the issue without stopping to ask.
+
+Otherwise stop and ask the person when any of these are unknown:
 
 - outcome (one sentence)
 - maturity: `implementation`, `exploration`, `examples`, or `spec`

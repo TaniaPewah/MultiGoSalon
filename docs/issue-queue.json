@@ -244,10 +244,10 @@
     "batch": "evening",
     "priority": 3,
     "maturity": "implementation",
-    "audience": "night",
+    "audience": "session",
     "title": "Show a reconnecting state and the forfeit countdown",
     "outcome": "A dropped player sees that the server is still holding the game and when the hold ends.",
-    "prompt": "After the relevance check, write a short plan and review it in an issue comment. This is a small front fix. Show the disconnected state and the grace countdown. Attach a before screenshot and an after screenshot to the Linear issue. Finish with one pull request that contains Fixes #N.",
+    "prompt": "After the relevance check, write a short plan and review it in an issue comment. The server keeps a 30 second grace and does not send that deadline to the client, so an accurate countdown is not a front-only change. Show the disconnected state and the grace countdown. Attach a before screenshot and an after screenshot to the Linear issue. Finish with one pull request that contains Fixes #N.",
     "acceptance": [
       "A lost socket shows a reconnecting state without sending a move",
       "The countdown matches the server grace window",
@@ -301,12 +301,12 @@
     "priority": 3,
     "maturity": "implementation",
     "audience": "night",
-    "title": "Show who is seated and which clock a table uses",
-    "outcome": "Before sitting, a player can see the occupants, the board size, and the time control of that table.",
-    "prompt": "After the relevance check, write a short plan and review it in an issue comment. This is a small front fix in the salon view. Attach a before screenshot and an after screenshot to the Linear issue. Finish with one pull request that contains Fixes #N.",
+    "title": "Show the seated player's name on the table",
+    "outcome": "A seated player's name is visible on the table without hovering.",
+    "prompt": "After the relevance check, write a short plan and review it in an issue comment. Table labels already show the board size and clock, such as 9×9 · Blitz. Keep those labels. Names currently live on the seat title and aria-label. This is a small front fix in the salon view. Attach a before screenshot and an after screenshot to the Linear issue. Finish with one pull request that contains Fixes #N.",
     "acceptance": [
-      "Each table shows its board size and time control before a player sits",
-      "A seated player's name is visible without hovering only",
+      "A seated player's name is visible without using the title or aria-label",
+      "The existing board-size and clock labels stay in place",
       "Before and after screenshots are attached to the Linear issue"
     ]
   },
@@ -317,10 +317,10 @@
     "audience": "night",
     "title": "Make the ko point obvious before a player clicks it",
     "outcome": "The illegal ko point is marked, and clicking it explains why the move was refused.",
-    "prompt": "After the relevance check, write a short plan and review it in an issue comment. This is a small full-stack fix of at most 4 files under the board component, the game view, and the game engine tests. Finish with one pull request that contains Fixes #N.",
+    "prompt": "After the relevance check, write a short plan and review it in an issue comment. The board already draws a small ko square, and a rejected move already raises game:error. Make the ko point obvious and explain a click on it. This is a small full-stack fix of at most 4 files under the board component, the game view, and the game engine tests. Finish with one pull request that contains Fixes #N.",
     "acceptance": [
-      "The ko point is visible on the current player's board",
-      "Clicking it does not send a move that the server would reject silently",
+      "The ko point is obvious on the current player's board",
+      "Clicking it explains the refusal instead of playing the point",
       "A test covers the mark and the refused click"
     ]
   },

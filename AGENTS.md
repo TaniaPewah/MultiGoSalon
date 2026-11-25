@@ -33,7 +33,7 @@ gh pr create --repo TaniaPewah/MultiGoSalon --base main --head "$branch" --fill
 
 # How We Open Work
 
-People describe the outcome. Agents open the Linear issue, then the matching GitHub issue, by following `.cursor/skills/open-linear-issue/SKILL.md`. Do not open an issue by hand, and do not invent missing fields. Ask when maturity, audience, acceptance criteria, or scope is unclear.
+People describe the outcome. Agents open the Linear issue, then the matching GitHub issue, by following `.cursor/skills/open-linear-issue/SKILL.md`. Do not open an issue by hand, and do not invent missing fields, unless autopilot mode is on (triggered by the human). Ask when maturity, audience, acceptance criteria, or scope is unclear.
 
 When the decisions are already made and the work spans several sessions, `/to-spec` records them as one parent issue, then `/to-tickets` splits that parent into vertical slices. A change that fits one session stays one implementation issue. Both skills publish through `open-linear-issue`.
 
