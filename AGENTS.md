@@ -31,7 +31,7 @@ gh pr create --repo TaniaPewah/MultiGoSalon --base main --head "$branch" --body-
 - Test multiple cases that check the same root cause.
 - Prefer integration tests over unit tests. Add a Playwright spec in `tests/` and run it with `npm test`.
 
-`npm test` runs the issue-selection tests and the server Vitest suite. Keep those tests. When a Playwright spec is added, `npm test` must run it too.
+`npm test` runs the issue-selection tests, the server Vitest suite, and the Playwright spec in `tests/`.
 
 # How We Open Work
 
