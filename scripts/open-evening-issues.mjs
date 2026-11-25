@@ -26,6 +26,7 @@ const LABEL_COLORS = {
   examples: '0CA678',
   later: '868E96',
   e2e: 'E03131',
+  spec: '1C7ED6',
 };
 
 function loadEnv() {

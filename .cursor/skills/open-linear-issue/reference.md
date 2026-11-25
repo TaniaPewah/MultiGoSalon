@@ -7,7 +7,7 @@
 <one sentence>
 
 ## Maturity
-implementation | exploration | examples
+implementation | exploration | examples | spec
 
 ## Audience
 night | session
@@ -28,6 +28,7 @@ Agent prompt by maturity:
 - **implementation** — After the relevance check, write a short plan and review it in an issue comment. Then implement in this issue's worktree only. Finish with one pull request that contains `Fixes #N`. Do not close the issue until every acceptance criterion is checked on that PR.
 - **exploration** — After the relevance check, investigate and paste the report as a Linear comment. Do not change code and do not open a pull request.
 - **examples** — After the relevance check, paste 5–7 distinct options as a Linear comment. Do not change code and do not open a pull request.
+- **spec** — This issue records decisions already made. Do not implement it. Child tickets from `/to-tickets` do the work. Close this parent when those children are closed.
 
 ## Labels
 
@@ -36,6 +37,7 @@ Agent prompt by maturity:
 | `implementation` | Ready to build. Ends in a PR. |
 | `exploration` | Report in a Linear comment. |
 | `examples` | 5–7 options in a Linear comment. |
+| `spec` | Parent decision record. Session only. Children do the work. |
 | `night` | The unattended night agent may take it. |
 | `session` | Only a working session with a person. |
 | `later` | AI coaching or AI review. The night agent must not take it. |

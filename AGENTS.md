@@ -35,6 +35,8 @@ gh pr create --repo TaniaPewah/MultiGoSalon --base main --head "$branch" --fill
 
 People describe the outcome. Agents open the Linear issue, then the matching GitHub issue, by following `.cursor/skills/open-linear-issue/SKILL.md`. Do not open an issue by hand, and do not invent missing fields. Ask when maturity, audience, acceptance criteria, or scope is unclear.
 
+When the decisions are already made and the work spans several sessions, `/to-spec` records them as one parent issue, then `/to-tickets` splits that parent into vertical slices. A change that fits one session stays one implementation issue. Both skills publish through `open-linear-issue`.
+
 The product goal is a bug-free multiplayer game plus a solo puzzle mode: solving puzzles earns XP, levels, and unlockable advancements; ranked matchmaking; a beginner course; timed puzzle leaderboards; daily quests; three board sizes; puzzle levels. Later: AI coaching and AI review.
 
 Each task starts in its own worktree:
