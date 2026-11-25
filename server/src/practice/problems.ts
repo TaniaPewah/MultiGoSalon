@@ -1,4 +1,5 @@
 import type { Color, TsumegoSummary, Vertex } from '@multigo/shared';
+import { GGG_PROBLEMS } from './ggg.js';
 
 /**
  * A node in the accepted-solution tree. The student plays `move`; if the node
@@ -29,10 +30,11 @@ export interface TsumegoProblem extends TsumegoSummary {
 }
 
 /**
- * Coordinates are [x, y] with [0, 0] in the top-left corner. All problems are
- * on a 9x9 board with Black to play.
+ * Coordinates are [x, y] with [0, 0] in the top-left corner. The hand-made
+ * problems come first, graded intro then easy then medium. The Weekly Go
+ * Problems follow, graded intermediate then hard. See SOURCES.md.
  */
-export const PROBLEMS: TsumegoProblem[] = [
+const HAND_MADE: TsumegoProblem[] = [
   {
     id: 'first-capture',
     title: 'First capture',
@@ -241,6 +243,12 @@ export const PROBLEMS: TsumegoProblem[] = [
     successMessage: 'Throw in, get captured, capture back. A two-point eye space is only one eye.',
   },
 ];
+
+const TIER = { intro: 0, easy: 1, medium: 2, intermediate: 3, hard: 4 } as const;
+
+export const PROBLEMS: TsumegoProblem[] = [...HAND_MADE, ...GGG_PROBLEMS].sort(
+  (a, b) => TIER[a.difficulty] - TIER[b.difficulty],
+);
 
 export function problemSummaries(): TsumegoSummary[] {
   return PROBLEMS.map(({ id, title, description, difficulty, size }) => ({ id, title, description, difficulty, size }));

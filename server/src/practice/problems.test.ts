@@ -13,10 +13,13 @@ function lines(nodes: SolutionNode[], prefix: SolutionNode[] = []): SolutionNode
 }
 
 describe('tsumego problem set', () => {
-  it('contains between 8 and 15 problems with unique ids', () => {
-    expect(PROBLEMS.length).toBeGreaterThanOrEqual(8);
-    expect(PROBLEMS.length).toBeLessThanOrEqual(15);
+  it('contains the 106-problem pool with unique ids', () => {
+    expect(PROBLEMS.length).toBe(106);
+    expect(PROBLEMS.length).toBeGreaterThanOrEqual(100);
     expect(new Set(PROBLEMS.map((p) => p.id)).size).toBe(PROBLEMS.length);
+    const order = ['intro', 'easy', 'medium', 'intermediate', 'hard'];
+    const grades = PROBLEMS.map((p) => order.indexOf(p.difficulty));
+    expect(grades.every((grade, i) => i === 0 || grade >= grades[i - 1]!)).toBe(true);
   });
 
   for (const problem of PROBLEMS) {
