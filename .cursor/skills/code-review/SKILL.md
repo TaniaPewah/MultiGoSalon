@@ -19,6 +19,13 @@ Review the two axes separately:
 
 Report the two lists separately. Fix a missed acceptance criterion or an `AGENTS.md` break, then review again. A smell stays in the pull request comment when it is not worth another edit.
 
+When the pull request is ready for review, leave one comment on it. The comment starts with **Agree** or **Disagree**.
+
+- **Agree** means the changed files have no blocking issue. Say that, then the spec list and the standards list.
+- **Disagree** names each issue found in the changed files, with the file. Do not merge.
+
+A pull request whose body has no `## Steps and decisions` section is a disagreement. The missing list is the issue.
+
 A major or unclear decision is not a defect to fix in another commit. The pull request must already be open, with `Fixes #N` in the body, before that decision is commented. Comment the options and what will not be chosen alone, leave the pull request unmerged, and select the next issue.
 
 After three reviews that still show the same blocking finding, comment that finding, leave the pull request unmerged, and select the next issue. Do not stop the run.

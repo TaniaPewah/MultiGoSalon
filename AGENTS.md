@@ -29,6 +29,19 @@ gh pr create --repo TaniaPewah/MultiGoSalon --base main --head "$branch" --body-
 
 Every commit message summarizes the steps taken to solve the issue and the technical decisions made during those steps. The subject is one sentence. The body lists the steps and, for each step, the decision that was made.
 
+# Steps on the pull request
+
+The pull request body lists those same steps and the technical decision made in each step. A commit message does not replace the pull request body. A squash merge keeps the pull request body, not the commit message. A pull request without this list is not ready for review and is not merged.
+
+# How we review
+
+When the pull request is ready for review, the code reviewing agent reviews the changed files and leaves one comment on the pull request. The comment agrees or disagrees.
+
+- **Agree** means the changed files have no blocking issue.
+- **Disagree** names each issue found in the changed files.
+
+A pull request is not merged without that comment. A disagreement is not merged.
+
 # Screenshots
 
 When a change needs a before screenshot and an after screenshot, commit both images on the branch and show them in the pull request body. A Linear attachment does not replace those pull request images. A new surface needs the after image on the pull request.
@@ -75,7 +88,7 @@ Finish the current pull request before starting the next issue. A clean review i
 2. A problem found during investigation or implementation that is not this issue is filed with `.cursor/skills/open-linear-issue/SKILL.md` as its own issue, linked as a sub-issue of the current one when the tracker allows. It is not added to this pull request. Work on the current issue continues.
 3. Write the plan. If a major or unclear decision remains, `.cursor/skills/pr/SKILL.md` writes `pr-body.md` with `Fixes #N`, the command block above opens the pull request, and the decision is commented there. That pull request stays open and is not merged. Then select the next issue.
 4. Otherwise implement. A bug follows `.cursor/skills/diagnosing-bugs/SKILL.md`. Any other code issue follows `.cursor/skills/tdd/SKILL.md`. `.cursor/skills/implement/SKILL.md` drives both. Open the pull request the same way if it is not open yet.
-5. After every commit, comment on the pull request with the commit and the review from `.cursor/skills/code-review/SKILL.md`. The commit message follows "How we commit".
+5. After every commit, comment on the pull request with the commit and the review from `.cursor/skills/code-review/SKILL.md`. The commit message follows "How we commit". The pull request body follows "Steps on the pull request". The review comment follows "How we review": it agrees or disagrees, and a disagreement lists the issues in the changed files.
 6. A missed acceptance criterion or an `AGENTS.md` break gets another commit and another review. After three rounds with the same blocking finding, comment that finding, leave the pull request open, and select the next issue.
 7. When the review is clean, `gh pr merge --squash`. Then `git fetch origin` and select the next issue.
 
