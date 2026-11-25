@@ -9,7 +9,7 @@ description: >-
 
 Adapted from Matt Pocock's `pr` skill (MIT), which credits the HumanLayer show-me skill.
 
-Push `HEAD` to `origin` on the `issue/<N>` branch. Open the pull request against `main` on `TaniaPewah/MultiGoSalon` with this body. Do not use `--fill`.
+Write this body to `pr-body.md`. Push `HEAD` to `origin` on the `issue/<N>` branch. Open the pull request against `main` on `TaniaPewah/MultiGoSalon` with `--body-file pr-body.md`. Do not use `--fill`. After each later commit, comment on the pull request with that commit. Merge with `gh pr merge --squash` only when `AGENTS.md` says the review is clean.
 
 ```markdown
 ## Summary

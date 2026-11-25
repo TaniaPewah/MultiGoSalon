@@ -8,7 +8,7 @@ description: >-
 
 # Retro
 
-Adapted from Matt Pocock's `retro` skill (MIT). Suggest changes to the agent environment, most severe first. Do not open an issue for a suggestion unless autopilot is on and the suggestion is one concrete outcome with acceptance criteria.
+Adapted from Matt Pocock's `retro` skill (MIT). Suggest changes to the agent environment, most severe first. During an autopilot run, list the suggestions after the run ends. Do not open an issue for one while the loop is still choosing the next issue.
 
 Look at this session for:
 
