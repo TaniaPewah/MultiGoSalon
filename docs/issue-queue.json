@@ -1,0 +1,355 @@
+[
+  {
+    "batch": "seed",
+    "priority": 2,
+    "maturity": "implementation",
+    "audience": "session",
+    "e2e": true,
+    "title": "Prove the salon, game, and practice flow in the browser",
+    "outcome": "A Playwright run walks the six player phases, saves a screenshot per phase, and records a video.",
+    "prompt": "After the relevance check, write a short plan and review it in an issue comment. Add a Playwright spec under tests/ that enters the salon, sees the other player move, starts a game, plays a legal move and shows an illegal move rejected, finishes the game, and solves one practice problem. Capture a screenshot per phase and a video of the run. Keep the existing Vitest suite. Make npm test run Vitest and this spec. Finish with one pull request that contains Fixes #N.",
+    "acceptance": [
+      "The spec covers all six phases against the running client and server",
+      "The run stores one screenshot per phase and a video",
+      "npm test runs the server Vitest suite and this Playwright spec"
+    ]
+  },
+  {
+    "batch": "seed",
+    "priority": 2,
+    "maturity": "implementation",
+    "audience": "session",
+    "title": "Persist ratings and finished game records across restarts",
+    "outcome": "A player's rating and finished games survive a server restart.",
+    "prompt": "After the relevance check, write a short plan and review it in an issue comment. Ratings and game records are in memory today and disappear when the server stops. Persist them and reload them on boot. Finish with one pull request that contains Fixes #N.",
+    "acceptance": [
+      "A finished game is still available after a restart",
+      "The same player id keeps the post-game rating after a restart",
+      "A restart does not resurrect an in-progress game as if it were still being played"
+    ]
+  },
+  {
+    "batch": "seed",
+    "priority": 3,
+    "maturity": "implementation",
+    "audience": "session",
+    "title": "Let players mark dead stones before scoring",
+    "outcome": "After two passes, both players can mark dead stones and the score uses that agreement.",
+    "prompt": "After the relevance check, write a short plan and review it in an issue comment. Scoring is area scoring and dead stones are not removed. Add an agreement step before the score is final. Finish with one pull request that contains Fixes #N.",
+    "acceptance": [
+      "Both players must agree on the dead stones before the score is shown as final",
+      "A disagreement returns the game to play or to a clear dispute, and does not silently score",
+      "The score counts the agreed dead stones"
+    ]
+  },
+  {
+    "batch": "seed",
+    "priority": 3,
+    "maturity": "exploration",
+    "audience": "night",
+    "title": "Design handicap games",
+    "outcome": "A report recommends how handicap stones, komi, and colors should work in this salon.",
+    "prompt": "After the relevance check, investigate and paste the report as a Linear comment. Cover handicap stone placement on 9, 13, and 19, who moves first, and what happens to komi. Do not change code and do not open a pull request.",
+    "acceptance": [
+      "The report states a placement rule for each board size",
+      "The report states who plays first and what komi is used",
+      "The report lists the server and client files a later implementation issue would touch"
+    ]
+  },
+  {
+    "batch": "seed",
+    "priority": 3,
+    "maturity": "exploration",
+    "audience": "night",
+    "title": "Design salon chat",
+    "outcome": "A report recommends the smallest chat that belongs in the salon.",
+    "prompt": "After the relevance check, investigate and paste the report as a Linear comment. Decide whether chat is per table, per game, or for the whole room, and how it should behave for spectators. Do not change code and do not open a pull request.",
+    "acceptance": [
+      "The report picks one chat scope and says why the others wait",
+      "The report names the socket events a later implementation would add",
+      "The report states what a player who disconnects should see on return"
+    ]
+  },
+  {
+    "batch": "seed",
+    "priority": 2,
+    "maturity": "exploration",
+    "audience": "night",
+    "title": "Design ranked matchmaking",
+    "outcome": "A report recommends how the queue should pair players by rating instead of taking the next two arrivals.",
+    "prompt": "After the relevance check, investigate and paste the report as a Linear comment. The queue today starts a game when two players are waiting and uses the first player's board size and clock. Propose a ranked pairing rule that can work before accounts exist. Do not change code and do not open a pull request.",
+    "acceptance": [
+      "The report describes the pairing rule, including what happens when nobody is close in rating",
+      "The report says whose board size and clock are used",
+      "The report separates this design from the settings-mismatch issue so the two are not implemented twice"
+    ]
+  },
+  {
+    "batch": "seed",
+    "priority": 2,
+    "maturity": "exploration",
+    "audience": "night",
+    "title": "Design puzzle XP, levels, and unlocks",
+    "outcome": "A report recommends how solving a tsumego awards XP, raises a level, and unlocks something.",
+    "prompt": "After the relevance check, investigate and paste the report as a Linear comment. Practice currently validates a solution tree and does not award progress. Propose the XP formula, the level thresholds, and the first unlock. Do not change code and do not open a pull request.",
+    "acceptance": [
+      "The report gives an XP award for a solve and for a failed attempt",
+      "The report lists level thresholds",
+      "The report names one unlock and the level that grants it"
+    ]
+  },
+  {
+    "batch": "seed",
+    "priority": 3,
+    "maturity": "exploration",
+    "audience": "night",
+    "title": "Design a beginner course",
+    "outcome": "A report recommends the first lessons a new player should see before open tsumego.",
+    "prompt": "After the relevance check, investigate and paste the report as a Linear comment. Use the existing practice problems as the material you can point at. Propose the lesson order and how a lesson differs from a graded puzzle. Do not change code and do not open a pull request.",
+    "acceptance": [
+      "The report lists the ordered lessons",
+      "Each lesson names an existing problem or an explicit gap",
+      "The report says how course progress is stored once persistence exists"
+    ]
+  },
+  {
+    "batch": "seed",
+    "priority": 3,
+    "maturity": "exploration",
+    "audience": "night",
+    "title": "Design timed puzzle leaderboards",
+    "outcome": "A report recommends what a timed puzzle leaderboard measures and how it resets.",
+    "prompt": "After the relevance check, investigate and paste the report as a Linear comment. Practice has no timer and no board of results. Propose the clock, the score, and the reset period. Do not change code and do not open a pull request.",
+    "acceptance": [
+      "The report defines the timed score",
+      "The report says who appears on the board and when it resets",
+      "The report names the data that must be persisted"
+    ]
+  },
+  {
+    "batch": "seed",
+    "priority": 3,
+    "maturity": "exploration",
+    "audience": "night",
+    "title": "Design daily quests",
+    "outcome": "A report recommends three daily quests a player can finish in one visit.",
+    "prompt": "After the relevance check, investigate and paste the report as a Linear comment. Propose the quest rules, the reward, and the day boundary. Do not change code and do not open a pull request.",
+    "acceptance": [
+      "The report lists three quests a current build could detect",
+      "The report states the reward and the day boundary",
+      "The report says what happens if the server restarts during the day"
+    ]
+  },
+  {
+    "batch": "seed",
+    "priority": 3,
+    "maturity": "exploration",
+    "audience": "night",
+    "title": "Design a puzzle level ladder",
+    "outcome": "A report recommends how puzzle levels should use the difficulty tags already on the problems.",
+    "prompt": "After the relevance check, investigate and paste the report as a Linear comment. Problems already carry a difficulty such as intro. Do not propose replacing that tag. Propose the ladder that gates which problems a player is offered. Do not change code and do not open a pull request.",
+    "acceptance": [
+      "The report lists the current difficulty tags and how many problems use each",
+      "The report defines the gate from one tag to the next",
+      "The report says what a player sees when no problem at their level remains"
+    ]
+  },
+  {
+    "batch": "seed",
+    "priority": 3,
+    "maturity": "exploration",
+    "audience": "night",
+    "title": "Design practice on 9×9, 13×13, and 19×19",
+    "outcome": "A report recommends how solo problems should cover the three board sizes used in the salon.",
+    "prompt": "After the relevance check, investigate and paste the report as a Linear comment. The built-in problems are 9×9. Multiplayer tables already use 9, 13, and 19. Propose which sizes get problems first and how a problem declares its size. Do not change code and do not open a pull request.",
+    "acceptance": [
+      "The report confirms the size of every current problem",
+      "The report picks the first size to add and why",
+      "The report names the shared types and client views a later issue would change"
+    ]
+  },
+  {
+    "batch": "seed",
+    "priority": 4,
+    "maturity": "exploration",
+    "audience": "session",
+    "later": true,
+    "title": "Design AI coaching",
+    "outcome": "A report recommends where a coach may speak during a game and where it must stay silent.",
+    "prompt": "After the relevance check, investigate and paste the report as a Linear comment. This is later work. Keep the proposal behind the ranked game and the puzzle loop. Do not change code and do not open a pull request.",
+    "acceptance": [
+      "The report names the moments a coach may comment",
+      "The report names the moments a coach must not comment, including the opponent's turn in a ranked game",
+      "The report says this waits until the browser proof and puzzle progress exist"
+    ]
+  },
+  {
+    "batch": "seed",
+    "priority": 4,
+    "maturity": "exploration",
+    "audience": "session",
+    "later": true,
+    "title": "Design AI review of a finished game",
+    "outcome": "A report recommends what an after-game review shows from a stored game record.",
+    "prompt": "After the relevance check, investigate and paste the report as a Linear comment. This is later work and depends on stored game records. Do not change code and do not open a pull request.",
+    "acceptance": [
+      "The report lists the review points a player would see",
+      "The report says which stored fields the review needs",
+      "The report says this waits until game records persist"
+    ]
+  },
+  {
+    "batch": "seed",
+    "priority": 3,
+    "maturity": "exploration",
+    "audience": "night",
+    "title": "Design a rating system with uncertainty",
+    "outcome": "A report recommends whether to stay on Elo or move to a system that tracks uncertainty.",
+    "prompt": "After the relevance check, investigate and paste the report as a Linear comment. The server uses Elo with K=32, starting at 1500, mapped to an EGF-like rank. Compare keeping Elo with a Glicko-style uncertainty for this salon. Do not change code and do not open a pull request.",
+    "acceptance": [
+      "The report states what the current formula does on a win, a loss, and a draw",
+      "The report recommends stay or move, with the reason",
+      "The report says how rank labels would change if the formula changes"
+    ]
+  },
+  {
+    "batch": "evening",
+    "priority": 2,
+    "maturity": "implementation",
+    "audience": "night",
+    "title": "Correct the docs for disconnect grace and rating lifetime",
+    "outcome": "README describes the 30 second reconnect grace and when a rating actually resets.",
+    "prompt": "After the relevance check, write a short plan and review it in an issue comment. README says a disconnect forfeits immediately and that a reload resets the rating. The server keeps a reconnect grace and can keep a profile past that window until the process stops. This is a doc fix in README.md only. Finish with one pull request that contains Fixes #N.",
+    "acceptance": [
+      "README matches the grace window in the server",
+      "README matches how long a rating survives a reload versus a server restart",
+      "The change is limited to README.md"
+    ]
+  },
+  {
+    "batch": "evening",
+    "priority": 2,
+    "maturity": "exploration",
+    "audience": "session",
+    "title": "Decide how player ids should work as session secrets",
+    "outcome": "A report recommends how a player id should be issued and what it is allowed to resume.",
+    "prompt": "After the relevance check, investigate and paste the report as a Linear comment. The client generates a UUID and the server trusts it to resume a session. Describe the risk and a replacement that still allows reconnect. Do not change code and do not open a pull request.",
+    "acceptance": [
+      "The report shows where the id is created and where it is accepted",
+      "The report states what a person who knows the id can do today",
+      "The report recommends who should generate the id"
+    ]
+  },
+  {
+    "batch": "evening",
+    "priority": 3,
+    "maturity": "implementation",
+    "audience": "session",
+    "title": "Show a reconnecting state and the forfeit countdown",
+    "outcome": "A dropped player sees that the server is still holding the game and when the hold ends.",
+    "prompt": "After the relevance check, write a short plan and review it in an issue comment. The server keeps a 30 second grace and does not send that deadline to the client, so an accurate countdown is not a front-only change. Show the disconnected state and the grace countdown. Attach a before screenshot and an after screenshot to the Linear issue. Finish with one pull request that contains Fixes #N.",
+    "acceptance": [
+      "A lost socket shows a reconnecting state without sending a move",
+      "The countdown matches the server grace window",
+      "Before and after screenshots are attached to the Linear issue"
+    ]
+  },
+  {
+    "batch": "evening",
+    "priority": 3,
+    "maturity": "exploration",
+    "audience": "night",
+    "title": "Decide what happens when two queued players want different games",
+    "outcome": "A report recommends the rule when the two waiting players chose different board sizes or clocks.",
+    "prompt": "After the relevance check, investigate and paste the report as a Linear comment. queue:join stores both settings and the game uses the first player's settings. Recommend the player-facing rule. Do not change code and do not open a pull request.",
+    "acceptance": [
+      "The report cites the code that discards the second player's settings",
+      "The report recommends one pairing rule",
+      "The report says what each player should see before the game starts"
+    ]
+  },
+  {
+    "batch": "evening",
+    "priority": 4,
+    "maturity": "examples",
+    "audience": "night",
+    "title": "Draft five to seven finished-game result panels",
+    "outcome": "Five to seven result-panel options are attached to the issue for a scored game, a resignation, a timeout, and a draw.",
+    "prompt": "After the relevance check, paste 5 to 7 distinct result-panel options as a Linear comment. Cover a scored game, a resignation, a timeout, and a draw. Do not change code and do not open a pull request.",
+    "acceptance": [
+      "The comment contains 5 to 7 options",
+      "The options cover score, resignation, timeout, and draw",
+      "Each option says what is on screen and what is left off"
+    ]
+  },
+  {
+    "batch": "evening",
+    "priority": 3,
+    "maturity": "exploration",
+    "audience": "night",
+    "title": "Report how each game-ending reason is explained",
+    "outcome": "A report quotes the client copy for resign, timeout, score, repetition, and abandon.",
+    "prompt": "After the relevance check, investigate and paste the report as a Linear comment. For each GameEndReason, quote what the client shows and say whether a new player can tell why the game ended. Do not change code and do not open a pull request.",
+    "acceptance": [
+      "The report covers resign, timeout, score, repetition, and abandon",
+      "Each reason includes the current client copy or says there is none",
+      "The report names any reason a new player would misunderstand"
+    ]
+  },
+  {
+    "batch": "evening",
+    "priority": 3,
+    "maturity": "implementation",
+    "audience": "night",
+    "title": "Show the seated player's name on the table",
+    "outcome": "A seated player's name is visible on the table without hovering.",
+    "prompt": "After the relevance check, write a short plan and review it in an issue comment. Table labels already show the board size and clock, such as 9×9 · Blitz. Keep those labels. Names currently live on the seat title and aria-label. This is a small front fix in the salon view. Attach a before screenshot and an after screenshot to the Linear issue. Finish with one pull request that contains Fixes #N.",
+    "acceptance": [
+      "A seated player's name is visible without using the title or aria-label",
+      "The existing board-size and clock labels stay in place",
+      "Before and after screenshots are attached to the Linear issue"
+    ]
+  },
+  {
+    "batch": "evening",
+    "priority": 3,
+    "maturity": "implementation",
+    "audience": "night",
+    "title": "Make the ko point obvious before a player clicks it",
+    "outcome": "The illegal ko point is marked, and clicking it explains why the move was refused.",
+    "prompt": "After the relevance check, write a short plan and review it in an issue comment. The board already draws a small ko square, and a rejected move already raises game:error. Make the ko point obvious and explain a click on it. This is a small full-stack fix of at most 4 files under the board component, the game view, and the game engine tests. Finish with one pull request that contains Fixes #N.",
+    "acceptance": [
+      "The ko point is obvious on the current player's board",
+      "Clicking it explains the refusal instead of playing the point",
+      "A test covers the mark and the refused click"
+    ]
+  },
+  {
+    "batch": "evening",
+    "priority": 3,
+    "maturity": "exploration",
+    "audience": "night",
+    "title": "Report whether a failed practice move shows the refutation",
+    "outcome": "A report says what a player sees after a wrong tsumego move, including the server reply.",
+    "prompt": "After the relevance check, investigate and paste the report as a Linear comment. Trace a wrong move from the client to practice:error and practice:state. Say whether the refutation is visible. Do not change code and do not open a pull request.",
+    "acceptance": [
+      "The report names the events sent on a wrong move",
+      "The report quotes the client feedback",
+      "The report says whether the server's reply stone is visible"
+    ]
+  },
+  {
+    "batch": "evening",
+    "priority": 3,
+    "maturity": "implementation",
+    "audience": "session",
+    "title": "Tell the player when a server restart ended their game",
+    "outcome": "After a restart, the client says the game is gone instead of looking like a normal disconnect.",
+    "prompt": "After the relevance check, write a short plan and review it in an issue comment. A restart drops in-memory games. The client should say the game ended because the server restarted, and should not offer the 30 second forfeit countdown for that case. Finish with one pull request that contains Fixes #N.",
+    "acceptance": [
+      "A client that reconnects to a fresh server sees a restart message",
+      "That message is different from the grace-window countdown",
+      "An in-memory game from the old process is not presented as still playable"
+    ]
+  }
+]
