@@ -25,6 +25,10 @@ gh pr create --repo TaniaPewah/MultiGoSalon --base main --head "$branch" --body-
 
 `.cursor/skills/pr/SKILL.md` writes `pr-body.md` before that command runs. The body contains `Fixes #N`.
 
+# How we commit
+
+Every commit message summarizes the steps taken to solve the issue and the technical decisions made during those steps. The subject is one sentence. The body lists the steps and, for each step, the decision that was made.
+
 # How We Test
 
 - When writing a test, explore the actual root cause of the bug or behavior.
@@ -67,7 +71,7 @@ Finish the current pull request before starting the next issue. A clean review i
 2. A problem found during investigation or implementation that is not this issue is filed with `.cursor/skills/open-linear-issue/SKILL.md` as its own issue, linked as a sub-issue of the current one when the tracker allows. It is not added to this pull request. Work on the current issue continues.
 3. Write the plan. If a major or unclear decision remains, `.cursor/skills/pr/SKILL.md` writes `pr-body.md` with `Fixes #N`, the command block above opens the pull request, and the decision is commented there. That pull request stays open and is not merged. Then select the next issue.
 4. Otherwise implement. A bug follows `.cursor/skills/diagnosing-bugs/SKILL.md`. Any other code issue follows `.cursor/skills/tdd/SKILL.md`. `.cursor/skills/implement/SKILL.md` drives both. Open the pull request the same way if it is not open yet.
-5. After every commit, comment on the pull request with the commit and the review from `.cursor/skills/code-review/SKILL.md`.
+5. After every commit, comment on the pull request with the commit and the review from `.cursor/skills/code-review/SKILL.md`. The commit message follows "How we commit".
 6. A missed acceptance criterion or an `AGENTS.md` break gets another commit and another review. After three rounds with the same blocking finding, comment that finding, leave the pull request open, and select the next issue.
 7. When the review is clean, `gh pr merge --squash`. Then `git fetch origin` and select the next issue.
 
