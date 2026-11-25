@@ -15,6 +15,9 @@ Write this body to `pr-body.md`. Push `HEAD` to `origin` on the `issue/<N>` bran
 ## Summary
 <the smallest diagram, tree, or diff that shows the change>
 
+## Steps and decisions
+- <what was done>. <the technical decision, and why>
+
 ## Evidence
 - **Before:** <failing test, screenshot, or current behavior>
 - **After:** <passing test, screenshot, or new behavior>
@@ -25,5 +28,7 @@ Write this body to `pr-body.md`. Push `HEAD` to `origin` on the `issue/<N>` bran
 
 Fixes #N
 ```
+
+`## Steps and decisions` is required. One bullet per step. Each bullet states the step and the decision made in that step. A pull request body that omits it is not ready for review.
 
 A front-end change uses a before screenshot and an after screenshot. A new surface uses the after screenshot. Keep the summary to one visual.
