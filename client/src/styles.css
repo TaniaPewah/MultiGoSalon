@@ -838,6 +838,8 @@ select {
 .path__node {
   width: 44px;
   height: 44px;
+  padding: 0;
+  overflow: hidden;
   border-radius: 50%;
   border: 3px solid var(--paper);
   background: var(--mint);
@@ -849,6 +851,19 @@ select {
 .path__node.problem--active {
   background: var(--lavender);
   box-shadow: 0 0 0 3px var(--lavender-deep);
+}
+.path__node--solved {
+  background: #1f8a70;
+  color: white;
+}
+.path__node:disabled {
+  opacity: 1;
+  filter: none;
+  cursor: default;
+}
+.path__node svg {
+  display: block;
+  margin: 0 auto;
 }
 .path__label {
   min-width: 0;
