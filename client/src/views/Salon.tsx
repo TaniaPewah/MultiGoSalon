@@ -133,33 +133,35 @@ export function SalonView() {
       </header>
 
       <section className="salon__body">
-        <div
-          ref={roomRef}
-          className="room"
-          style={{ aspectRatio: `${salon.width} / ${salon.height}` }}
-          onClick={onFloorClick}
-          data-testid="room"
-        >
-          <div className="room__rug" />
-          <div className="room__plants" aria-hidden>
-            <span>🪴</span>
-            <span>🌿</span>
-            <span>🪴</span>
+        <div className="room-scroll">
+          <div
+            ref={roomRef}
+            className="room"
+            style={{ aspectRatio: `${salon.width} / ${salon.height}` }}
+            onClick={onFloorClick}
+            data-testid="room"
+          >
+            <div className="room__rug" />
+            <div className="room__plants" aria-hidden>
+              <span>🪴</span>
+              <span>🌿</span>
+              <span>🪴</span>
+            </div>
+            {salon.tables.map((t) => (
+              <Table
+                key={t.id}
+                table={t}
+                salon={salon}
+                players={salon.players}
+                onSit={actions.sit}
+                onWalkTo={actions.moveTo}
+                meId={me.id}
+              />
+            ))}
+            {salon.players.map((p) => (
+              <PlayerSprite key={p.id} player={p} isMe={p.id === me.id} room={salon} />
+            ))}
           </div>
-          {salon.tables.map((t) => (
-            <Table
-              key={t.id}
-              table={t}
-              salon={salon}
-              players={salon.players}
-              onSit={actions.sit}
-              onWalkTo={actions.moveTo}
-              meId={me.id}
-            />
-          ))}
-          {salon.players.map((p) => (
-            <PlayerSprite key={p.id} player={p} isMe={p.id === me.id} room={salon} />
-          ))}
         </div>
 
         <aside className="sidebar">

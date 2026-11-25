@@ -953,9 +953,21 @@ select {
 
 /* ---------- responsive ---------- */
 @media (max-width: 900px) {
-  .salon__body,
+  .salon__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
   .practice__layout {
     grid-template-columns: 1fr;
+  }
+  .room-scroll {
+    min-width: 0;
+    overflow: auto;
+    max-height: 62dvh;
+    border-radius: 28px;
+  }
+  .room-scroll .room {
+    width: 880px;
+    max-width: none;
   }
   .characters__grid {
     grid-template-columns: 1fr;
