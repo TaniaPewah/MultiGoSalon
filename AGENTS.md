@@ -31,7 +31,23 @@ Every commit message summarizes the steps taken to solve the issue and the techn
 
 # Steps on the pull request
 
-The pull request body lists those same steps and the technical decision made in each step. A commit message does not replace the pull request body. A squash merge keeps the pull request body, not the commit message. A pull request without this list is not ready for review and is not merged.
+Every PR must explain the actual implementation steps and technical decisions in **both the PR body and a PR discussion comment**. Commit messages, agent chat, plans, and Linear comments do not replace either. This applies to all agents, including agents launched through Paseo, and to documentation/workflow PRs too.
+
+Use this format in both places, with one numbered entry per meaningful solving step (investigation, implementation, testing, and later fixes as applicable):
+
+```markdown
+## Steps and decisions
+1. <step title>
+   Change: <what was done and which files/components changed>
+   Decision: <technical choice, why it was chosen, and relevant alternatives/trade-offs>
+   Validation: <actual command/check and result, or explicitly explain what was not run and why>
+```
+
+Publish the discussion comment with `gh pr comment <N> --body-file <file>`. Include `<!-- implementation-evidence:<full HEAD SHA> -->` in that comment. After every new commit, update the body and publish/update the discussion evidence for the new HEAD. Describe completed work, not a proposed plan; do not invent tests or decisions. An incomplete/decision-blocked PR may be opened, but must stay unmerged.
+
+Before merging, run `node scripts/check-pr-evidence.mjs TaniaPewah/MultiGoSalon <N>`. Missing, placeholder, or stale evidence blocks completion. The reviewer must verify that the explanations are accurate, cover the actual steps, and include the rationale for each technical decision; a format check alone cannot establish this.
+
+Paseo launches agents; it does not itself enforce repository prose. Agents must use `node scripts/merge-pr.mjs <N>` instead of calling `gh pr merge` directly. This rechecks the live body/discussion and pins the merge to the checked HEAD. The GitHub workflow publishes `PR implementation evidence` on PR changes and comment creation/edit/deletion, using trusted default-branch code only. An administrator must require this status in the main branch protection/ruleset to block merges outside the wrapper as well. Keep the existing clean-review requirement.
 
 # How we review
 
@@ -90,6 +106,6 @@ Finish the current pull request before starting the next issue. A clean review i
 4. Otherwise implement. A bug follows `.cursor/skills/diagnosing-bugs/SKILL.md`. Any other code issue follows `.cursor/skills/tdd/SKILL.md`. `.cursor/skills/implement/SKILL.md` drives both. Open the pull request the same way if it is not open yet.
 5. After every commit, comment on the pull request with the commit and the review from `.cursor/skills/code-review/SKILL.md`. The commit message follows "How we commit". The pull request body follows "Steps on the pull request". The review comment follows "How we review": it agrees or disagrees, and a disagreement lists the issues in the changed files.
 6. A missed acceptance criterion or an `AGENTS.md` break gets another commit and another review. After three rounds with the same blocking finding, comment that finding, leave the pull request open, and select the next issue.
-7. When the review is clean, `gh pr merge --squash`. Then `git fetch origin` and select the next issue.
+7. When the review is clean and the body/discussion evidence is current, run `node scripts/merge-pr.mjs <PR-number>`. Never bypass a failed evidence check. Then `git fetch origin` and select the next issue.
 
 An `examples` issue uses `.cursor/skills/prototype/SKILL.md`. `.cursor/skills/retro/SKILL.md` lists environment suggestions after the run ends. Those suggestions are not filed during the loop.
