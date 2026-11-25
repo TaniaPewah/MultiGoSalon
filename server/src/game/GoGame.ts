@@ -35,7 +35,7 @@ export interface GoGameOptions {
   setup?: { black: Vertex[]; white: Vertex[]; toPlay: Color };
 }
 
-export type MoveResult = { ok: true } | { ok: false; error: GameError };
+export type MoveResult = { ok: true; resumed?: boolean } | { ok: false; error: GameError };
 
 const DEFAULT_KOMI = 7.5;
 
@@ -61,6 +61,7 @@ export class GoGame {
   result: GameResult | null = null;
   koPoint: Vertex | null = null;
   territory: Sign[][] | null = null;
+  dead: { black: Vertex[] | null; white: Vertex[] | null } = { black: null, white: null };
 
   private readonly repetitionLimit: number;
   private positionCounts = new Map<string, number>();
@@ -182,12 +183,43 @@ export class GoGame {
     this.advanceTurn(now);
     this.recordPosition();
 
-    if (this.consecutivePasses >= 2) this.score(now);
+    if (this.consecutivePasses >= 2) this.phase = 'scoring';
+    return { ok: true };
+  }
+
+  /** During scoring, record the stones this colour believes are dead. Matching sets finish the game. */
+  markDead(color: Color, points: Vertex[], now = Date.now()): MoveResult {
+    if (this.phase !== 'scoring') return fail('invalid', 'Dead stones are marked after both players pass.');
+    const unique: Vertex[] = [];
+    const seen = new Set<string>();
+    for (const point of points) {
+      const x = Number(point[0]);
+      const y = Number(point[1]);
+      if (!Number.isInteger(x) || !Number.isInteger(y) || x < 0 || y < 0 || x >= this.size || y >= this.size) {
+        return fail('out-of-bounds', 'That point is not on the board.');
+      }
+      if (this.board.get([x, y]) === 0) return fail('invalid', 'Only stones can be marked dead.');
+      const key = `${x},${y}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      unique.push([x, y]);
+    }
+    this.dead[color] = unique;
+    const other = this.dead[opponentOf(color)];
+    if (!other) return { ok: true };
+    if (!samePoints(unique, other)) {
+      this.dead = { black: null, white: null };
+      this.consecutivePasses = 0;
+      this.phase = 'playing';
+      this.turnStartedAt = now;
+      return { ok: true, resumed: true };
+    }
+    this.score(now, unique);
     return { ok: true };
   }
 
   resign(color: Color, now = Date.now()): MoveResult {
-    if (this.phase !== 'playing') return fail('game-over', 'The game is already over.');
+    if (this.phase === 'finished') return fail('game-over', 'The game is already over.');
     const winner = opponentOf(color);
     this.finish({ winner, reason: 'resign', summary: `${winner === 'black' ? 'B' : 'W'}+R` }, now);
     return { ok: true };
@@ -195,7 +227,7 @@ export class GoGame {
 
   /** Ends the game because `color` left; the opponent wins. */
   abandon(color: Color, now = Date.now()): void {
-    if (this.phase !== 'playing') return;
+    if (this.phase === 'finished') return;
     const winner = opponentOf(color);
     this.finish({ winner, reason: 'abandon', summary: `${winner === 'black' ? 'B' : 'W'}+F` }, now);
   }
@@ -218,6 +250,10 @@ export class GoGame {
       timeControl: this.timeControl,
       territory: this.territory,
       koPoint: this.koPoint,
+      dead: {
+        black: this.dead.black ? this.dead.black.map((point) => [...point] as Vertex) : null,
+        white: this.dead.white ? this.dead.white.map((point) => [...point] as Vertex) : null,
+      },
     };
   }
 
@@ -259,8 +295,10 @@ export class GoGame {
     return count;
   }
 
-  private score(now: number) {
-    const { score, territory } = scoreArea(this.signMap, this.komi);
+  private score(now: number, dead: Vertex[]) {
+    const board = this.signMap;
+    for (const [x, y] of dead) board[y][x] = 0;
+    const { score, territory } = scoreArea(board, this.komi);
     this.territory = territory;
     const diff = score.black - score.white;
     this.finish(
@@ -283,6 +321,12 @@ export class GoGame {
     this.result = result;
     this.finishedAt = now;
   }
+}
+
+function samePoints(a: Vertex[], b: Vertex[]): boolean {
+  if (a.length !== b.length) return false;
+  const keys = new Set(a.map(([x, y]) => `${x},${y}`));
+  return b.every(([x, y]) => keys.has(`${x},${y}`));
 }
 
 function fail(code: GameError['code'], message: string): MoveResult {

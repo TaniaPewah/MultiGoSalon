@@ -70,12 +70,16 @@ export class GameManager {
     return this.act(playerId, gameId, (game, color) => game.resign(color));
   }
 
+  markDead(playerId: string, gameId: string, points: [number, number][]) {
+    return this.act(playerId, gameId, (game, color) => game.markDead(color, points));
+  }
+
   /** A player disconnected: they forfeit any running game. */
   abandon(playerId: string) {
     const game = this.gameOf(playerId);
     if (!game) return;
     const color = game.colorOf(playerId);
-    if (color && game.phase === 'playing') {
+    if (color && game.phase !== 'finished') {
       game.abandon(color);
       this.afterChange(game);
     }
@@ -86,7 +90,7 @@ export class GameManager {
   leave(playerId: string, gameId: string) {
     const entry = this.games.get(gameId);
     if (!entry) return;
-    if (entry.game.phase === 'playing') {
+    if (entry.game.phase !== 'finished') {
       this.abandon(playerId);
       return;
     }

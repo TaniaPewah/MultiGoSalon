@@ -613,6 +613,11 @@ select {
   fill: #1c1826;
   opacity: 0.8;
 }
+.go-board__dead {
+  fill: none;
+  stroke: #d94f70;
+  stroke-width: 0.07;
+}
 .go-board__ko {
   fill: none;
   stroke: #d94f70;
