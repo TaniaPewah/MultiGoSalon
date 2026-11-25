@@ -148,7 +148,11 @@ describe('ko', () => {
     expect(g.koPoint).toEqual([2, 1]);
     const res = g.place('black', 2, 1, 1);
     expect(res.ok).toBe(false);
-    if (!res.ok) expect(res.error.code).toBe('ko');
+    if (!res.ok) {
+      expect(res.error.code).toBe('ko');
+      expect(res.error.message).toBe('Ko: you must play elsewhere before retaking.');
+    }
+    expect(g.signMap[1][2]).toBe(0);
   });
 
   it('allows retaking the ko after a move elsewhere', () => {

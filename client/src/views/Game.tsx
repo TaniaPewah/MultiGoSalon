@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { colorToSign, opponentOf, type Color, type PlayerInfo, type Vertex } from '@multigo/shared';
 import { Avatar } from '../components/Avatar';
 import { Clock } from '../components/Clock';
@@ -9,6 +9,12 @@ export function GameView() {
   const { me, game, actions } = useStore();
   const [confirmResign, setConfirmResign] = useState(false);
   const [draftDead, setDraftDead] = useState<Vertex[]>([]);
+  const [koNote, setKoNote] = useState('');
+  const koPoint = game?.state.koPoint;
+  const moveNumber = game?.state.moveNumber;
+  useEffect(() => {
+    setKoNote('');
+  }, [koPoint, moveNumber]);
 
   if (!me || !game) {
     return (
@@ -28,6 +34,7 @@ export function GameView() {
   const flipped = perspective === 'white';
 
   const statusText = (() => {
+    if (koNote) return koNote;
     if (state.phase === 'scoring') return 'Mark the dead stones. The score waits until you both agree.';
     if (state.phase === 'finished' && state.result) return resultText(state, me.id);
     if (isSpectator) {
@@ -79,6 +86,11 @@ export function GameView() {
                 : undefined
             }
             onPlace={isSpectator || state.phase !== 'playing' ? undefined : actions.place}
+            onKo={
+              isMyTurn
+                ? () => setKoNote('Ko: you must play elsewhere before retaking.')
+                : undefined
+            }
           />
         </div>
 
