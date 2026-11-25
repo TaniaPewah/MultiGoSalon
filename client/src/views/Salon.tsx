@@ -271,7 +271,13 @@ function Table({
             title={occupant ? `${occupant.name} is sitting here` : `Sit down at ${table.label}`}
             aria-label={occupant ? `${occupant.name} is sitting here` : `Sit at ${table.label}, seat ${seat + 1}`}
             data-testid={`seat-${table.id}-${seat}`}
-          />
+          >
+            {occupant ? (
+              <span className="seat__name" data-testid={`seat-name-${table.id}-${seat}`}>
+                {occupant.name}
+              </span>
+            ) : null}
+          </button>
         );
       })}
     </>

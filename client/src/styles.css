@@ -416,7 +416,20 @@ select {
 .seat--taken {
   background: var(--lavender);
   cursor: default;
-  opacity: 0.6;
+}
+.seat__name {
+  position: absolute;
+  top: 115%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: clamp(0.55rem, 1.1vw, 0.75rem);
+  font-weight: 800;
+  color: var(--ink);
+  background: var(--paper);
+  border-radius: 999px;
+  padding: 0.05rem 0.4rem;
+  pointer-events: none;
 }
 .sprite {
   position: absolute;
