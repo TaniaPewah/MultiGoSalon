@@ -46,3 +46,14 @@ scripts/new-worktree.sh <github-issue-number>
 ```
 
 Approved queue: `docs/issue-queue.json`. The 18:00 UTC job files up to 10 unfiled `evening` items with `scripts/open-evening-issues.mjs`.
+
+# Autopilot
+
+Autopilot is on only when the person in this conversation explicitly turns it on. Then work one issue through without stopping to ask. Read the skill for the current step:
+
+1. Relevance check, then `scripts/new-worktree.sh <github-issue-number>`.
+2. A bug goes through `.cursor/skills/diagnosing-bugs/SKILL.md`. Implementation goes through `.cursor/skills/tdd/SKILL.md`. `.cursor/skills/implement/SKILL.md` drives both.
+3. `.cursor/skills/code-review/SKILL.md` reviews the diff against `origin/main` and the issue.
+4. `.cursor/skills/pr/SKILL.md` writes the pull request body. Push with the commands above, and pass that body to `gh pr create` instead of `--fill`. The body contains `Fixes #N`.
+
+An `examples` issue uses `.cursor/skills/prototype/SKILL.md` and ends as a Linear comment. After the pull request is open, `.cursor/skills/retro/SKILL.md` lists environment improvements. Night-agent file limits still apply to a `night` issue.

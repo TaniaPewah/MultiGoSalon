@@ -53,5 +53,5 @@ One issue is one outcome. Split bundled requests.
 1. `scripts/new-worktree.sh <github-issue-number>`
 2. Relevance check first. Update the issue if part of it is already done. Stop if none of it is still relevant.
 3. `exploration` and `examples` end as a Linear comment. They do not open a pull request. A `spec` is a parent decision record: do not implement it in one pull request. `/to-tickets` splits it, and the parent closes when its child tickets have closed.
-4. `implementation` writes a short plan, reviews that plan in the issue comments, then implements. The review is done by the agent. The work ends as one pull request whose body contains `Fixes #<github-number>`.
+4. `implementation` writes a short plan, reviews that plan in the issue comments, then implements. When autopilot is on, follow `.cursor/skills/implement/SKILL.md`. The work ends as one pull request whose body contains `Fixes #<github-number>`.
 5. Close the issue only when every acceptance criterion is met and recorded on the pull request or the Linear comment.
