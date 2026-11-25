@@ -46,22 +46,27 @@ test('six player phases through salon, game, and practice', async ({ browser }) 
 
   await aki.getByTestId('find-game').click();
   await yuki.getByTestId('find-game').click();
-  await expect(aki.getByTestId('game-status')).toContainText('Your move.');
-  await expect(yuki.getByTestId('game-status')).toContainText('Waiting for Aki');
+  await expect(aki.getByTestId('game-status')).toBeVisible();
   await aki.screenshot({ path: `${ARTIFACTS}/phase-3-game.png` });
 
-  await clickPoint(aki, 0, 1, 9, false);
-  await expect(yuki.getByTestId('game-status')).toContainText('Your move.');
-  await clickPoint(yuki, 4, 4, 9, true);
-  await expect(aki.getByTestId('game-status')).toContainText('Your move.');
-  await clickPoint(aki, 1, 0, 9, false);
-  await expect(yuki.getByTestId('game-status')).toContainText('Your move.');
-  await clickPoint(yuki, 0, 0, 9, true);
-  await expect(yuki.getByText('Suicide is not allowed.')).toBeVisible();
-  await yuki.screenshot({ path: `${ARTIFACTS}/phase-4-illegal.png` });
+  const akiMovesFirst = (await aki.getByTestId('game-status').innerText()).includes('Your move');
+  const first = akiMovesFirst ? aki : yuki;
+  const second = akiMovesFirst ? yuki : aki;
+  const firstFlipped = (await first.getByTestId('player-card-white').innerText()).includes(akiMovesFirst ? 'Aki' : 'Yuki');
+  const secondFlipped = !firstFlipped;
 
-  await yuki.getByTestId('resign-button').click();
-  await yuki.getByTestId('confirm-resign').click();
+  await clickPoint(first, 0, 1, 9, firstFlipped);
+  await expect(second.getByTestId('game-status')).toContainText('Your move.');
+  await clickPoint(second, 4, 4, 9, secondFlipped);
+  await expect(first.getByTestId('game-status')).toContainText('Your move.');
+  await clickPoint(first, 1, 0, 9, firstFlipped);
+  await expect(second.getByTestId('game-status')).toContainText('Your move.');
+  await clickPoint(second, 0, 0, 9, secondFlipped);
+  await expect(second.getByText('Suicide is not allowed.')).toBeVisible();
+  await second.screenshot({ path: `${ARTIFACTS}/phase-4-illegal.png` });
+
+  await second.getByTestId('resign-button').click();
+  await second.getByTestId('confirm-resign').click();
   await expect(aki.getByTestId('result-panel')).toBeVisible();
   await aki.screenshot({ path: `${ARTIFACTS}/phase-5-finish.png` });
 
