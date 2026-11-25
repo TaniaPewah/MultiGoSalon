@@ -53,7 +53,7 @@ Ports can be changed with `PORT`/`HOST` for the server and `MULTIGO_SERVER_URL` 
 - **Triple repetition**: the server hashes every position (board + player to move). If any position occurs three times (e.g. a triple ko), the game ends in a **draw**. Repeating a position once is otherwise allowed (no superko ban), as requested.
 - **Pass**: two consecutive passes end the game and trigger scoring.
 - **Scoring**: area scoring (Tromp-Taylor / Chinese style): stones on the board plus empty regions that touch only one colour, with **komi 7.5** for White. Dead stones are *not* removed automatically – capture them before passing, as under Tromp-Taylor rules. The final ownership map is drawn on the board.
-- **Resign** and **timeout** (loss on time) and **abandon** (a disconnecting player forfeits).
+- **Resign** and **timeout** (loss on time). **Abandon**: a disconnect holds the game for 30 seconds. Reconnecting in that window resumes it. When the hold ends, that player forfeits.
 - **Clock**: main time + Fischer increment per player (presets: 1 min + 5 s, 5 min + 10 s, 15 min + 15 s). The server owns the clock: it stamps every move, arms a timer for the player to move and declares the loss itself. Clients only interpolate the last server snapshot for display; a move that arrives after the flag fell is rejected and the game ends on time.
 
 ## Rating and ranks
@@ -67,7 +67,7 @@ Each connected player starts at **1500** and is updated after every game with a 
 | 1500   | 6 kyu (starting rank) |
 | 1000   | 11 kyu |
 
-The same player id keeps its rating across a page reload and a server restart. Real Go servers use more elaborate systems (Glicko-style uncertainty, handicap-aware expected scores); Elo was chosen because it is simple, well understood and good enough for v1.
+A page reload keeps the rating: the browser keeps the same player id, and the server reads it from memory or from the JSON file. A server restart keeps that stored rating and the finished games. It does not resume a game that was still in progress. A new player id starts at 1500. Real Go servers use more elaborate systems (Glicko-style uncertainty, handicap-aware expected scores); Elo was chosen because it is simple, well understood and good enough for v1.
 
 ## Sync architecture
 
