@@ -42,8 +42,10 @@ export function App() {
 
   return (
     <div className="app">
-      <ReconnectBanner />
-      <RestartNotice />
+      <div className="notices">
+        <ReconnectBanner />
+        <RestartNotice />
+      </div>
       {view === 'login' && <LoginView />}
       {view === 'salon' && <SalonView />}
       {view === 'game' && <GameView />}
