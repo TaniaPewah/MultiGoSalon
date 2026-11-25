@@ -1,11 +1,22 @@
+import { useEffect, useRef } from 'react';
 import { colorToSign } from '@multigo/shared';
 import { GoBoard } from '../components/GoBoard';
 import { useStore } from '../store';
 
 export function PracticeView() {
   const { problems, practice, actions } = useStore();
+  const listRef = useRef<HTMLOListElement>(null);
   const currentIndex = practice ? problems.findIndex((p) => p.id === practice.problemId) : -1;
   const next = currentIndex >= 0 && currentIndex < problems.length - 1 ? problems[currentIndex + 1] : null;
+
+  useEffect(() => {
+    const list = listRef.current;
+    const active = list?.querySelector('.problem--active');
+    if (!list || !(active instanceof HTMLElement)) return;
+    const listTop = list.getBoundingClientRect().top;
+    const activeTop = active.getBoundingClientRect().top;
+    list.scrollTop += activeTop - listTop - list.clientHeight / 2 + active.clientHeight / 2;
+  }, [practice?.problemId]);
 
   return (
     <main className="practice">
@@ -24,7 +35,7 @@ export function PracticeView() {
           <h2>Tsumego</h2>
           <p className="muted">Graded from intro to hard. Black to play. Find the move that captures, lives or kills.</p>
           {problems.length === 0 && <p className="muted">Loading problems…</p>}
-          <ol>
+          <ol ref={listRef}>
             {problems.map((p, i) => (
               <li key={p.id}>
                 <button
