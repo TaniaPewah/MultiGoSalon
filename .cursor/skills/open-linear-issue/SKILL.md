@@ -40,6 +40,10 @@ The evening script may create only queue items that already have every field. It
 
 One issue is one outcome. Split bundled requests.
 
+## A finding that is not the current issue
+
+File it as its own issue with the steps above. On Linear, set `parentId` to the issue being worked. On GitHub, add it as a sub-issue of that issue. If the link fails, the new issue still stands on its own. Do not add the finding to the current pull request, and do not switch to the new issue until `scripts/select-next-issue.mjs` prints it.
+
 ## Create
 
 1. Search Linear and GitHub for the same title. If it exists, stop and return the existing URLs.
@@ -52,6 +56,6 @@ One issue is one outcome. Split bundled requests.
 
 1. `scripts/new-worktree.sh <github-issue-number>`
 2. Relevance check first. Update the issue if part of it is already done. Stop if none of it is still relevant.
-3. `exploration` and `examples` end as a Linear comment. They do not open a pull request. A `spec` is a parent decision record: do not implement it in one pull request. `/to-tickets` splits it, and the parent closes when its child tickets have closed.
-4. `implementation` writes a short plan, reviews that plan in the issue comments, then implements. The review is done by the agent. The work ends as one pull request whose body contains `Fixes #<github-number>`.
+3. `exploration` and `examples` end as a Linear comment. They do not open a pull request. With autopilot off, a `spec` stays a parent: `/to-tickets` splits it, and the parent is not implemented in one pull request. With autopilot on, a `spec` issue is implemented.
+4. `implementation`, and a `spec` while autopilot is on, writes a short plan, reviews that plan in the issue comments, then implements. When autopilot is on, follow `.cursor/skills/implement/SKILL.md`. The work ends as one pull request whose body contains `Fixes #<github-number>`.
 5. Close the issue only when every acceptance criterion is met and recorded on the pull request or the Linear comment.

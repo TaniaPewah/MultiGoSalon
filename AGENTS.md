@@ -20,8 +20,10 @@ export GIT_TERMINAL_PROMPT=0
 export GH_PROMPT_DISABLED=1
 branch=$(git symbolic-ref --short HEAD)
 git push origin "HEAD:refs/heads/$branch"
-gh pr create --repo TaniaPewah/MultiGoSalon --base main --head "$branch" --fill
+gh pr create --repo TaniaPewah/MultiGoSalon --base main --head "$branch" --body-file pr-body.md
 ```
+
+`.cursor/skills/pr/SKILL.md` writes `pr-body.md` before that command runs. The body contains `Fixes #N`.
 
 # How We Test
 
@@ -29,7 +31,7 @@ gh pr create --repo TaniaPewah/MultiGoSalon --base main --head "$branch" --fill
 - Test multiple cases that check the same root cause.
 - Prefer integration tests over unit tests. Add a Playwright spec in `tests/` and run it with `npm test`.
 
-`npm test` currently runs the server Vitest suite. Keep those tests. When a Playwright spec is added, `npm test` must run both.
+`npm test` runs the issue-selection tests and the server Vitest suite. Keep those tests. When a Playwright spec is added, `npm test` must run it too.
 
 # How We Open Work
 
@@ -46,3 +48,27 @@ scripts/new-worktree.sh <github-issue-number>
 ```
 
 Approved queue: `docs/issue-queue.json`. The 18:00 UTC job files up to 10 unfiled `evening` items with `scripts/open-evening-issues.mjs`.
+
+# Autopilot
+
+Autopilot is on only when the person in this conversation explicitly turns it on. `scripts/select-next-issue.mjs` prints the next open issue. This is the only copy of that order:
+
+- Skip `later`. Skip an issue whose `Blocked by` line names an issue that is still open. Skip an issue that already has an open pull request.
+- `implementation` and `spec` are the code pool. A `spec` issue is implemented, not left as a parent.
+- Order inside the code pool: `e2e`, then other `night`, then `session`. The lowest issue number wins inside a group.
+- `exploration` and `examples` are chosen only when the code pool is empty. They end as a Linear comment and have no pull request.
+- When nothing eligible is open, run `node scripts/open-evening-issues.mjs --batch evening --limit 10` once. If it opens nothing, the run ends.
+
+A `night` issue still obeys the file limits in `.cursor/skills/open-linear-issue/reference.md`.
+
+Finish the current pull request before starting the next issue. A clean review is merged. An unclear decision or a third failed review is left open, and the run continues:
+
+1. Relevance check, then `scripts/new-worktree.sh <github-issue-number>`. The worktree is cut from `origin/main`.
+2. A problem found during investigation or implementation that is not this issue is filed with `.cursor/skills/open-linear-issue/SKILL.md` as its own issue, linked as a sub-issue of the current one when the tracker allows. It is not added to this pull request. Work on the current issue continues.
+3. Write the plan. If a major or unclear decision remains, `.cursor/skills/pr/SKILL.md` writes `pr-body.md` with `Fixes #N`, the command block above opens the pull request, and the decision is commented there. That pull request stays open and is not merged. Then select the next issue.
+4. Otherwise implement. A bug follows `.cursor/skills/diagnosing-bugs/SKILL.md`. Any other code issue follows `.cursor/skills/tdd/SKILL.md`. `.cursor/skills/implement/SKILL.md` drives both. Open the pull request the same way if it is not open yet.
+5. After every commit, comment on the pull request with the commit and the review from `.cursor/skills/code-review/SKILL.md`.
+6. A missed acceptance criterion or an `AGENTS.md` break gets another commit and another review. After three rounds with the same blocking finding, comment that finding, leave the pull request open, and select the next issue.
+7. When the review is clean, `gh pr merge --squash`. Then `git fetch origin` and select the next issue.
+
+An `examples` issue uses `.cursor/skills/prototype/SKILL.md`. `.cursor/skills/retro/SKILL.md` lists environment suggestions after the run ends. Those suggestions are not filed during the loop.
