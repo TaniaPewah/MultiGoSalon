@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { selectNextIssue } from './select-next-issue.mjs';
+import { issuesClaimedByOpenPullRequests, selectNextIssue } from './select-next-issue.mjs';
 
 function issue(number, labels, extra = {}) {
   return { number, state: 'open', labels, ...extra };
@@ -58,6 +58,25 @@ test('exploration is chosen only when no code issue is eligible', () => {
   ]);
   assert.equal(waiting, 2);
   assert.equal(onlyDesign, 3);
+});
+
+test('an open pull request claims its issue by branch name and by Fixes', () => {
+  const claimed = issuesClaimedByOpenPullRequests([
+    { headRefName: 'issue/4', body: 'Fixes #4' },
+    { headRefName: 'workflow/other', body: 'Closes #9' },
+  ]);
+  assert.deepEqual(claimed.sort((a, b) => a - b), [4, 9]);
+});
+
+test('an issue with an open pull request is left for a person and the next issue is chosen', () => {
+  const next = selectNextIssue(
+    [
+      issue(1, ['implementation', 'e2e']),
+      issue(2, ['implementation', 'night']),
+    ],
+    [1],
+  );
+  assert.equal(next, 2);
 });
 
 test('a closed blocker does not keep the issue waiting', () => {

@@ -53,7 +53,7 @@ Approved queue: `docs/issue-queue.json`. The 18:00 UTC job files up to 10 unfile
 
 Autopilot is on only when the person in this conversation explicitly turns it on. `scripts/select-next-issue.mjs` prints the next open issue. This is the only copy of that order:
 
-- Skip `later`. Skip an issue whose `Blocked by` line names an issue that is still open.
+- Skip `later`. Skip an issue whose `Blocked by` line names an issue that is still open. Skip an issue that already has an open pull request.
 - `implementation` and `spec` are the code pool. A `spec` issue is implemented, not left as a parent.
 - Order inside the code pool: `e2e`, then other `night`, then `session`. The lowest issue number wins inside a group.
 - `exploration` and `examples` are chosen only when the code pool is empty. They end as a Linear comment and have no pull request.
@@ -61,14 +61,14 @@ Autopilot is on only when the person in this conversation explicitly turns it on
 
 A `night` issue still obeys the file limits in `.cursor/skills/open-linear-issue/reference.md`.
 
-For a code issue, merge it before starting the next one:
+Finish the current pull request before starting the next issue. A clean review is merged. An unclear decision is left open:
 
 1. Relevance check, then `scripts/new-worktree.sh <github-issue-number>`. The worktree is cut from `origin/main`.
 2. A bug follows `.cursor/skills/diagnosing-bugs/SKILL.md`. Any other code issue follows `.cursor/skills/tdd/SKILL.md`. `.cursor/skills/implement/SKILL.md` drives both.
 3. `.cursor/skills/pr/SKILL.md` writes `pr-body.md`. Push with the command block above.
 4. After every commit, comment on the pull request with the commit and the review from `.cursor/skills/code-review/SKILL.md`.
 5. A missed acceptance criterion or an `AGENTS.md` break gets another commit and another review. After three rounds with the same blocking finding, leave the pull request open and stop.
-6. A major or unclear decision is commented on the pull request, with the options and what the agent will not choose alone. The agent waits. It does not merge and does not start the next issue.
+6. A major or unclear decision is commented on the pull request, with the options and what the agent will not choose alone. That pull request stays open and is not merged. The agent selects the next issue.
 7. When the review is clean, `gh pr merge --squash`. Then `git fetch origin` and select the next issue.
 
 An `examples` issue uses `.cursor/skills/prototype/SKILL.md`. `.cursor/skills/retro/SKILL.md` lists environment suggestions after the run ends. It does not open issues during the loop.

@@ -19,4 +19,4 @@ Review the two axes separately:
 
 Report the two lists separately. Fix a missed acceptance criterion or an `AGENTS.md` break, then review again. A smell stays in the pull request comment when it is not worth another edit.
 
-A major or unclear decision is not a defect to fix in another commit. Comment the decision, the options, and what will not be chosen alone, then wait.
+A major or unclear decision is not a defect to fix in another commit. Comment the decision, the options, and what will not be chosen alone. Leave that pull request open and unmerged so the autopilot loop can select the next issue.

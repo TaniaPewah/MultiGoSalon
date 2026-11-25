@@ -9,10 +9,13 @@ import { pathToFileURL } from 'node:url';
 
 const REPO = 'TaniaPewah/MultiGoSalon';
 
-export function selectNextIssue(issues) {
+export function selectNextIssue(issues, openPullRequestIssues = []) {
   const open = issues.filter((issue) => issue.state !== 'closed');
   const openNumbers = new Set(open.map((issue) => issue.number));
-  const eligible = open.filter((issue) => !hasLabel(issue, 'later') && !isBlocked(issue, openNumbers));
+  const claimed = new Set(openPullRequestIssues);
+  const eligible = open.filter(
+    (issue) => !claimed.has(issue.number) && !hasLabel(issue, 'later') && !isBlocked(issue, openNumbers),
+  );
   const code = eligible.filter((issue) => hasLabel(issue, 'implementation') || hasLabel(issue, 'spec'));
   const pool = code.length
     ? code
@@ -45,15 +48,33 @@ function rank(issue) {
   return 2;
 }
 
-function fromGitHub() {
-  const result = spawnSync(
-    'gh',
-    ['issue', 'list', '--repo', REPO, '--state', 'open', '--limit', '200', '--json', 'number,labels,body'],
-    { encoding: 'utf8' },
-  );
+function ghJson(args) {
+  const result = spawnSync('gh', args, { encoding: 'utf8' });
   if (result.status !== 0) throw new Error((result.stderr || result.stdout || 'gh failed').trim());
-  const issues = JSON.parse(result.stdout || '[]').map((issue) => ({ ...issue, state: 'open' }));
-  const next = selectNextIssue(issues);
+  return JSON.parse(result.stdout || '[]');
+}
+
+export function issuesClaimedByOpenPullRequests(pullRequests) {
+  const claimed = new Set();
+  for (const pullRequest of pullRequests) {
+    const branch = pullRequest.headRefName ?? '';
+    const branchIssue = branch.match(/^issue\/(\d+)$/);
+    if (branchIssue) claimed.add(Number(branchIssue[1]));
+    for (const match of (pullRequest.body ?? '').matchAll(/(?:Fixes|Closes|Resolves)\s+#(\d+)/gi)) {
+      claimed.add(Number(match[1]));
+    }
+  }
+  return [...claimed];
+}
+
+function fromGitHub() {
+  const issues = ghJson([
+    'issue', 'list', '--repo', REPO, '--state', 'open', '--limit', '200', '--json', 'number,labels,body',
+  ]).map((issue) => ({ ...issue, state: 'open' }));
+  const claimed = issuesClaimedByOpenPullRequests(
+    ghJson(['pr', 'list', '--repo', REPO, '--state', 'open', '--limit', '200', '--json', 'body,headRefName']),
+  );
+  const next = selectNextIssue(issues, claimed);
   if (next === null) return;
   process.stdout.write(`${next}\n`);
 }
