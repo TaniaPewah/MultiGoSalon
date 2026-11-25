@@ -65,7 +65,8 @@ describe('session reconnect', () => {
     const bId = '22222222-2222-4222-8222-222222222222';
     const a = connectClient();
     const b = connectClient();
-    await join(a, 'Alice', aId);
+    const joined = await join(a, 'Alice', aId);
+    expect(joined.reconnectGraceMs).toBe(graceMs);
     await join(b, 'Bob', bId);
 
     const started = onceEvent(a, 'game:start');

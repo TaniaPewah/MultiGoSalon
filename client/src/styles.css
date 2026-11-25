@@ -890,6 +890,21 @@ select {
   padding: 3rem 1rem;
 }
 
+/* ---------- reconnect ---------- */
+.reconnect {
+  position: fixed;
+  left: 50%;
+  top: 0.8rem;
+  transform: translateX(-50%);
+  z-index: 60;
+  background: #fff4cc;
+  color: #6a4b12;
+  border-radius: 999px;
+  padding: 0.55rem 1.1rem;
+  font-weight: 700;
+  box-shadow: var(--shadow);
+}
+
 /* ---------- toasts ---------- */
 .toasts {
   position: fixed;

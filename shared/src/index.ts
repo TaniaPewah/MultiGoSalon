@@ -164,7 +164,7 @@ export interface GameError {
 export type SessionResume = 'salon' | 'game' | 'practice' | 'spectate';
 
 export interface ServerToClientEvents {
-  'session:ready': (payload: { player: PlayerInfo; resume: SessionResume }) => void;
+  'session:ready': (payload: { player: PlayerInfo; resume: SessionResume; reconnectGraceMs: number }) => void;
   'session:player': (player: PlayerInfo) => void;
   'salon:state': (state: SalonState) => void;
   'salon:moved': (payload: { id: string; x: number; y: number }) => void;
