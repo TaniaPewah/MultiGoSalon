@@ -61,14 +61,14 @@ Autopilot is on only when the person in this conversation explicitly turns it on
 
 A `night` issue still obeys the file limits in `.cursor/skills/open-linear-issue/reference.md`.
 
-Finish the current pull request before starting the next issue. A clean review is merged. An unclear decision is left open:
+Finish the current pull request before starting the next issue. A clean review is merged. An unclear decision or a third failed review is left open, and the run continues:
 
 1. Relevance check, then `scripts/new-worktree.sh <github-issue-number>`. The worktree is cut from `origin/main`.
-2. A bug follows `.cursor/skills/diagnosing-bugs/SKILL.md`. Any other code issue follows `.cursor/skills/tdd/SKILL.md`. `.cursor/skills/implement/SKILL.md` drives both.
-3. `.cursor/skills/pr/SKILL.md` writes `pr-body.md`. Push with the command block above.
-4. After every commit, comment on the pull request with the commit and the review from `.cursor/skills/code-review/SKILL.md`.
-5. A missed acceptance criterion or an `AGENTS.md` break gets another commit and another review. After three rounds with the same blocking finding, leave the pull request open and stop.
-6. A major or unclear decision is commented on the pull request, with the options and what the agent will not choose alone. That pull request stays open and is not merged. The agent selects the next issue.
+2. A problem found during investigation or implementation that is not this issue is filed with `.cursor/skills/open-linear-issue/SKILL.md` as its own issue, linked as a sub-issue of the current one when the tracker allows. It is not added to this pull request. Work on the current issue continues.
+3. Write the plan. If a major or unclear decision remains, `.cursor/skills/pr/SKILL.md` writes `pr-body.md` with `Fixes #N`, the command block above opens the pull request, and the decision is commented there. That pull request stays open and is not merged. Then select the next issue.
+4. Otherwise implement. A bug follows `.cursor/skills/diagnosing-bugs/SKILL.md`. Any other code issue follows `.cursor/skills/tdd/SKILL.md`. `.cursor/skills/implement/SKILL.md` drives both. Open the pull request the same way if it is not open yet.
+5. After every commit, comment on the pull request with the commit and the review from `.cursor/skills/code-review/SKILL.md`.
+6. A missed acceptance criterion or an `AGENTS.md` break gets another commit and another review. After three rounds with the same blocking finding, comment that finding, leave the pull request open, and select the next issue.
 7. When the review is clean, `gh pr merge --squash`. Then `git fetch origin` and select the next issue.
 
-An `examples` issue uses `.cursor/skills/prototype/SKILL.md`. `.cursor/skills/retro/SKILL.md` lists environment suggestions after the run ends. It does not open issues during the loop.
+An `examples` issue uses `.cursor/skills/prototype/SKILL.md`. `.cursor/skills/retro/SKILL.md` lists environment suggestions after the run ends. Those suggestions are not filed during the loop.

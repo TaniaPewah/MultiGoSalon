@@ -40,6 +40,10 @@ The evening script may create only queue items that already have every field. It
 
 One issue is one outcome. Split bundled requests.
 
+## A finding that is not the current issue
+
+File it as its own issue with the steps above. On Linear, set `parentId` to the issue being worked. On GitHub, add it as a sub-issue of that issue. If the link fails, the new issue still stands on its own. Do not add the finding to the current pull request, and do not switch to the new issue until `scripts/select-next-issue.mjs` prints it.
+
 ## Create
 
 1. Search Linear and GitHub for the same title. If it exists, stop and return the existing URLs.
