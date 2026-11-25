@@ -30,7 +30,9 @@ function gh(...args) {
 export function checkPR(repo, number) {
   if (!/^[\w.-]+\/[\w.-]+$/.test(repo ?? '') || !/^\d+$/.test(String(number))) throw new Error('Usage: node scripts/check-pr-evidence.mjs owner/repo PR_NUMBER [--status]');
   const pr = JSON.parse(gh('api', `repos/${repo}/pulls/${number}`));
-  const comments = JSON.parse(gh('api', '--paginate', '--slurp', `repos/${repo}/issues/${number}/comments`)).flat();
+  // JSON Lines works with older gh releases that do not support --slurp.
+  const lines = gh('api', '--paginate', `repos/${repo}/issues/${number}/comments`, '--jq', '.[] | @json');
+  const comments = lines ? lines.split('\n').map(line => JSON.parse(line)) : [];
   return { pr, errors: evidenceErrors(pr, comments) };
 }
 
