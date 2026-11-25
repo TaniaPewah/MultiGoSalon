@@ -128,7 +128,7 @@ export interface TsumegoSummary {
   id: string;
   title: string;
   description: string;
-  difficulty: 'intro' | 'easy' | 'medium';
+  difficulty: 'intro' | 'easy' | 'medium' | 'intermediate' | 'hard';
   size: number;
 }
 

@@ -22,7 +22,7 @@ export function PracticeView() {
       <section className="practice__layout">
         <aside className="problem-list" data-testid="problem-list">
           <h2>Tsumego</h2>
-          <p className="muted">Black to play in every problem. Find the move that captures, lives or kills.</p>
+          <p className="muted">Graded from intro to hard. Black to play. Find the move that captures, lives or kills.</p>
           {problems.length === 0 && <p className="muted">Loading problems…</p>}
           <ol>
             {problems.map((p, i) => (
@@ -34,7 +34,7 @@ export function PracticeView() {
                 >
                   <span className="problem__index">{i + 1}</span>
                   <span className="problem__title">{p.title}</span>
-                  <span className={`difficulty difficulty--${p.difficulty}`}>{p.difficulty}</span>
+                  <span className={`difficulty difficulty--${p.difficulty === 'hard' || p.difficulty === 'intermediate' ? 'medium' : p.difficulty}`}>{p.difficulty}</span>
                 </button>
               </li>
             ))}
