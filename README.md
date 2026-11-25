@@ -2,7 +2,7 @@
 
 A small real-time multiplayer **Go** (baduk / weiqi) salon, in the spirit of the online Go client from *Hikaru no Go*: a pastel 2D room where you walk around as a sloth, a shark or a jellyfish, sit down at a table or hit **Find game**, and play Go against another connected player with a server-side clock. A built-in **Practice** mode offers classic life-and-death (tsumego) problems you can solve solo.
 
-Everything is in-memory: no database, no accounts. Ratings live for as long as your browser tab is connected.
+There is no database and no accounts. Ratings and finished games are stored in a JSON file on the server (`MULTIGO_STORE`, default `data/salon.json`). A restart keeps those records. A game that was still in progress is not resumed.
 
 ## Stack
 
@@ -67,7 +67,7 @@ Each connected player starts at **1500** and is updated after every game with a 
 | 1500   | 6 kyu (starting rank) |
 | 1000   | 11 kyu |
 
-Ratings are kept in memory per connection, so they reset when you reload the page. Real Go servers use more elaborate systems (Glicko-style uncertainty, handicap-aware expected scores); Elo was chosen because it is simple, well understood and good enough for v1.
+The same player id keeps its rating across a page reload and a server restart. Real Go servers use more elaborate systems (Glicko-style uncertainty, handicap-aware expected scores); Elo was chosen because it is simple, well understood and good enough for v1.
 
 ## Sync architecture
 
@@ -97,6 +97,7 @@ server/src/index.ts        express + socket.io bootstrap (port 4870)
 server/src/sockets.ts      socket event handlers (session, salon, queue, game, practice)
 server/src/salon.ts        2D room state: players, positions, tables, seats
 server/src/GameManager.ts  live games, timeout timers, rating updates
+server/src/persist.ts     ratings and finished games, reloaded on boot
 server/src/game/GoGame.ts  authoritative rules engine + clock
 server/src/game/scoring.ts area scoring
 server/src/practice/       tsumego problems + practice sessions
@@ -107,4 +108,4 @@ client/src/views/          Login, Salon, Game, Practice
 
 ## Not in v1
 
-Chat, dead-stone marking before scoring, handicap games, persistence of ratings and game records across server restarts, and a smarter rating system.
+Chat, dead-stone marking before scoring, handicap games, and a smarter rating system.

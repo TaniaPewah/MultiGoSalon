@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Server } from 'socket.io';
 import type { ClientToServerEvents, ServerToClientEvents } from '@multigo/shared';
+import { openStore } from './persist.js';
 import { registerSockets } from './sockets.js';
 
 const PORT = Number(process.env.PORT ?? 4870);
@@ -16,8 +17,14 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
   cors: { origin: true },
 });
 
+const store = openStore(process.env.MULTIGO_STORE ?? path.join(process.cwd(), 'data', 'salon.json'));
+
 app.get('/health', (_req, res) => {
   res.json({ ok: true, uptime: process.uptime() });
+});
+
+app.get('/records', (_req, res) => {
+  res.json(store.records());
 });
 
 // Walk up from this file until we find client/dist. tsc's outDir nesting
@@ -50,7 +57,7 @@ if (clientDist) {
   });
 }
 
-registerSockets(io);
+registerSockets(io, { store });
 
 httpServer.listen(PORT, HOST, () => {
   console.log(`multiGO server listening on http://${HOST}:${PORT}`);

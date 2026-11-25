@@ -15,6 +15,7 @@ import { Salon, sanitizeCharacter, sanitizeName } from './salon.js';
 import { PracticeSession } from './practice/PracticeSession.js';
 import { findProblem, problemSummaries } from './practice/problems.js';
 import type { GoGame } from './game/GoGame.js';
+import type { SalonStore } from './persist.js';
 
 type IO = Server<ClientToServerEvents, ServerToClientEvents>;
 type Sock = Socket<ClientToServerEvents, ServerToClientEvents>;
@@ -33,8 +34,9 @@ const MAX_MAIN_TIME_MS = 2 * 60 * 60 * 1000;
 const MAX_INCREMENT_MS = 60 * 1000;
 export const RECONNECT_GRACE_MS = 30_000;
 
-export function registerSockets(io: IO, opts?: { reconnectGraceMs?: number }) {
+export function registerSockets(io: IO, opts?: { reconnectGraceMs?: number; store?: SalonStore }) {
   const reconnectGraceMs = opts?.reconnectGraceMs ?? RECONNECT_GRACE_MS;
+  const store = opts?.store;
   const sessions = new Map<string, Session>();
   const socketToPlayer = new Map<string, string>();
   /** Survives grace-window cleanup so a later rejoin keeps the last rating. */
@@ -81,6 +83,7 @@ export function registerSockets(io: IO, opts?: { reconnectGraceMs?: number }) {
         }
       }
       broadcastSalon();
+      store?.finish(game.toState(), updated);
     },
   });
 
@@ -225,12 +228,13 @@ export function registerSockets(io: IO, opts?: { reconnectGraceMs?: number }) {
       if (socketToPlayer.has(socket.id)) return;
 
       const prior = profiles.get(playerId);
+      const stored = prior ? undefined : store?.rating(playerId);
       const player: PlayerInfo = {
         id: playerId,
         name: sanitizeName(payload?.name),
         character: sanitizeCharacter(payload?.character),
-        rating: prior?.rating ?? STARTING_RATING,
-        rank: prior?.rank ?? ratingToRank(STARTING_RATING),
+        rating: prior?.rating ?? stored?.rating ?? STARTING_RATING,
+        rank: prior?.rank ?? stored?.rank ?? ratingToRank(STARTING_RATING),
       };
       profiles.set(playerId, player);
       const session: Session = {
