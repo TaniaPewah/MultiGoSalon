@@ -29,6 +29,10 @@ gh pr create --repo TaniaPewah/MultiGoSalon --base main --head "$branch" --body-
 
 Every commit message summarizes the steps taken to solve the issue and the technical decisions made during those steps. The subject is one sentence. The body lists the steps and, for each step, the decision that was made.
 
+# Screenshots
+
+When a change needs a before screenshot and an after screenshot, commit both images on the branch and show them in the pull request body. A Linear attachment does not replace those pull request images. A new surface needs the after image on the pull request.
+
 # How We Test
 
 - When writing a test, explore the actual root cause of the bug or behavior.
