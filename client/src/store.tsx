@@ -37,6 +37,8 @@ interface Store {
   practice: PracticeState | null;
   problems: TsumegoSummary[];
   toasts: Toast[];
+  /** Epoch ms when the server grace hold ends, or null while the socket is up. */
+  reconnectUntil: number | null;
   actions: {
     join: (name: string, character: Character) => void;
     moveTo: (x: number, y: number) => void;
@@ -105,6 +107,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [practice, setPractice] = useState<PracticeState | null>(null);
   const [problems, setProblems] = useState<TsumegoSummary[]>([]);
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [reconnectUntil, setReconnectUntil] = useState<number | null>(null);
+  const graceMsRef = useRef<number | null>(null);
   const lastGameRef = useRef<GameState | null>(null);
   const lastPracticeRef = useRef<PracticeState | null>(null);
 
@@ -117,6 +121,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const onConnect = () => {
       setConnected(true);
+      setReconnectUntil(null);
       const name = localStorage.getItem(NAME_KEY);
       const character = (localStorage.getItem(CHARACTER_KEY) as Character | null) ?? 'sloth';
       const playerId = localStorage.getItem(PLAYER_ID_KEY);
@@ -126,9 +131,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     };
     const onDisconnect = () => {
       setConnected(false);
+      const graceMs = graceMsRef.current;
+      if (graceMs != null) setReconnectUntil(Date.now() + graceMs);
       pushToast('Connection lost. Reconnecting…', 'info');
     };
-    const onReady = ({ player, resume }: { player: PlayerInfo; resume: SessionResume }) => {
+    const onReady = ({ player, resume, reconnectGraceMs }: { player: PlayerInfo; resume: SessionResume; reconnectGraceMs: number }) => {
+      graceMsRef.current = reconnectGraceMs;
       setMe(player);
       if (resume === 'game' || resume === 'spectate') {
         setView('game');
@@ -235,32 +243,50 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         else socket.once('connect', send);
       },
       moveTo: (x, y) => {
+        if (!socket.connected) return;
         setSalon((s) =>
           s && me ? { ...s, players: s.players.map((p) => (p.id === me.id ? { ...p, x, y } : p)) } : s,
         );
         socket.emit('salon:move', { x, y });
       },
-      sit: (tableId, seat) => socket.emit('salon:sit', { tableId, seat }),
-      stand: () => socket.emit('salon:stand'),
-      joinQueue: (settings) => socket.emit('queue:join', settings),
-      leaveQueue: () => socket.emit('queue:leave'),
+      sit: (tableId, seat) => {
+        if (!socket.connected) return;
+        socket.emit('salon:sit', { tableId, seat });
+      },
+      stand: () => {
+        if (!socket.connected) return;
+        socket.emit('salon:stand');
+      },
+      joinQueue: (settings) => {
+        if (!socket.connected) return;
+        socket.emit('queue:join', settings);
+      },
+      leaveQueue: () => {
+        if (!socket.connected) return;
+        socket.emit('queue:leave');
+      },
       place: (x, y) => {
+        if (!socket.connected) return;
         const g = lastGameRef.current;
         if (g) socket.emit('game:place', { gameId: g.id, x, y });
       },
       pass: () => {
+        if (!socket.connected) return;
         const g = lastGameRef.current;
         if (g) socket.emit('game:pass', { gameId: g.id });
       },
       resign: () => {
+        if (!socket.connected) return;
         const g = lastGameRef.current;
         if (g) socket.emit('game:resign', { gameId: g.id });
       },
       agreeDead: (points) => {
+        if (!socket.connected) return;
         const g = lastGameRef.current;
         if (g) socket.emit('game:dead', { gameId: g.id, points });
       },
       leaveGame: () => {
+        if (!socket.connected) return;
         const g = lastGameRef.current;
         if (g) {
           const playing = me && (g.players.black.id === me.id || g.players.white.id === me.id);
@@ -272,13 +298,24 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setView('salon');
       },
       openPractice: () => {
+        if (!socket.connected) return;
         socket.emit('practice:list');
         setView('practice');
       },
-      startProblem: (id) => socket.emit('practice:start', { problemId: id }),
-      practiceMove: (x, y) => socket.emit('practice:move', { x, y }),
-      resetProblem: () => socket.emit('practice:reset'),
+      startProblem: (id) => {
+        if (!socket.connected) return;
+        socket.emit('practice:start', { problemId: id });
+      },
+      practiceMove: (x, y) => {
+        if (!socket.connected) return;
+        socket.emit('practice:move', { x, y });
+      },
+      resetProblem: () => {
+        if (!socket.connected) return;
+        socket.emit('practice:reset');
+      },
       closePractice: () => {
+        if (!socket.connected) return;
         socket.emit('practice:stop');
         lastPracticeRef.current = null;
         setPractice(null);
@@ -289,7 +326,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     [me],
   );
 
-  const value: Store = { view, connected, me, salon, queue, game, practice, problems, toasts, actions };
+  const value: Store = { view, connected, me, salon, queue, game, practice, problems, toasts, reconnectUntil, actions };
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }
 

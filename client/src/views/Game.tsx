@@ -6,7 +6,7 @@ import { GoBoard } from '../components/GoBoard';
 import { useStore, type TimedGameState } from '../store';
 
 export function GameView() {
-  const { me, game, actions } = useStore();
+  const { me, game, actions, connected } = useStore();
   const [confirmResign, setConfirmResign] = useState(false);
   const [draftDead, setDraftDead] = useState<Vertex[]>([]);
   const [koNote, setKoNote] = useState('');
@@ -85,7 +85,7 @@ export function GameView() {
                     )
                 : undefined
             }
-            onPlace={isSpectator || state.phase !== 'playing' ? undefined : actions.place}
+            onPlace={!connected || isSpectator || state.phase !== 'playing' ? undefined : actions.place}
             onKo={
               isMyTurn
                 ? () => setKoNote('Ko: you must play elsewhere before retaking.')

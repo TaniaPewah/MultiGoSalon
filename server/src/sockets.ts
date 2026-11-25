@@ -219,7 +219,7 @@ export function registerSockets(io: IO, opts?: { reconnectGraceMs?: number; stor
         profiles.set(playerId, existing.player);
         salon.updateInfo(existing.player);
         const resume = resumeFor(socket, playerId, existing);
-        socket.emit('session:ready', { player: existing.player, resume });
+        socket.emit('session:ready', { player: existing.player, resume, reconnectGraceMs });
         broadcastSalon();
         return;
       }
@@ -248,7 +248,7 @@ export function registerSockets(io: IO, opts?: { reconnectGraceMs?: number; stor
       sessions.set(playerId, session);
       attachSocket(socket, playerId, session);
       salon.join(player);
-      socket.emit('session:ready', { player, resume: 'salon' });
+      socket.emit('session:ready', { player, resume: 'salon', reconnectGraceMs });
       broadcastSalon();
     });
 
