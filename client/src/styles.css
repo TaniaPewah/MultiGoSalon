@@ -810,6 +810,53 @@ select {
   display: grid;
   gap: 0.4rem;
 }
+.path {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+}
+.path__stop {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 0.55rem;
+  align-items: center;
+  position: relative;
+  min-width: 0;
+  padding: 0.2rem 0;
+}
+.path__stop:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 21px;
+  top: 36px;
+  bottom: -8px;
+  width: 3px;
+  border-radius: 999px;
+  background: #e4d4f5;
+}
+.path__node {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 3px solid var(--paper);
+  background: var(--mint);
+  font-weight: 900;
+  color: var(--ink);
+  position: relative;
+  z-index: 1;
+}
+.path__node.problem--active {
+  background: var(--lavender);
+  box-shadow: 0 0 0 3px var(--lavender-deep);
+}
+.path__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+}
 .problem {
   width: 100%;
   border: 2px solid transparent;
@@ -1093,7 +1140,7 @@ select {
     min-height: 44px;
   }
   .problem-list {
-    max-height: 22dvh;
+    max-height: 48dvh;
     overflow: hidden;
     display: flex;
     flex-direction: column;

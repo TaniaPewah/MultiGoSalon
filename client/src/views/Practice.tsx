@@ -35,18 +35,18 @@ export function PracticeView() {
           <h2>Tsumego</h2>
           <p className="muted">Graded from intro to hard. Black to play. Find the move that captures, lives or kills.</p>
           {problems.length === 0 && <p className="muted">Loading problems…</p>}
-          <ol ref={listRef}>
+          <ol className="path" ref={listRef}>
             {problems.map((p, i) => (
-              <li key={p.id}>
+              <li key={p.id} className="path__stop">
                 <button
-                  className={['problem', practice?.problemId === p.id ? 'problem--active' : ''].join(' ')}
+                  className={['path__node', practice?.problemId === p.id ? 'problem--active' : ''].join(' ')}
                   onClick={() => actions.startProblem(p.id)}
                   data-testid={`problem-${p.id}`}
+                  aria-label={p.title}
                 >
-                  <span className="problem__index">{i + 1}</span>
-                  <span className="problem__title">{p.title}</span>
-                  <span className={`difficulty difficulty--${p.difficulty === 'hard' || p.difficulty === 'intermediate' ? 'medium' : p.difficulty}`}>{p.difficulty}</span>
+                  {i + 1}
                 </button>
+                <span className="path__label">{p.title}</span>
               </li>
             ))}
           </ol>
