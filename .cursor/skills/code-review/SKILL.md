@@ -12,6 +12,8 @@ Adapted from Matt Pocock's `code-review` skill (MIT).
 
 The fixed point is `origin/main`. Compare with `git diff origin/main...HEAD`. The spec is the GitHub issue named by the branch (`issue/<N>`) or by `Fixes #N`. Standards are `AGENTS.md` and the night-agent limits when the issue is labeled `night`.
 
+Before agreeing, run `node scripts/check-pr-evidence.mjs TaniaPewah/MultiGoSalon <PR-number>` and inspect both the PR body and current-HEAD implementation discussion comment. Verify each actual solving step explains its change, technical choice, rationale/trade-offs, and honest validation results. Missing, stale, inaccurate, or superficial evidence is a blocking standards finding, even if the format check passes. Agent chat and commit messages do not count as PR discussion.
+
 Review the two axes separately:
 
 - **Spec.** Which acceptance criteria are missing or only partly done? Which behavior in the diff was not asked for?
