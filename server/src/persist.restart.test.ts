@@ -116,7 +116,7 @@ describe('ratings and finished games survive a restart', () => {
     const port = await boot();
     const a = connect(port);
     const b = connect(port);
-    await join(a, 'Aki', aId);
+    const first = await join(a, 'Aki', aId);
     await join(b, 'Yuki', bId);
 
     const started = onceEvent(a, 'game:start');
@@ -129,6 +129,7 @@ describe('ratings and finished games survive a restart', () => {
     const again = connect(restarted);
     const session = await join(again, 'Aki', aId);
     expect(session.resume).toBe('salon');
+    expect(session.serverId).not.toBe(first.serverId);
     expect(session.player.rating).toBe(1500);
 
     const records = (await fetch(`http://127.0.0.1:${restarted}/records`).then((r) => r.json())) as GameState[];

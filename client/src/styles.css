@@ -891,6 +891,23 @@ select {
 }
 
 /* ---------- reconnect ---------- */
+.restart {
+  position: fixed;
+  left: 50%;
+  top: 4.6rem;
+  transform: translateX(-50%);
+  z-index: 61;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  background: #ffd3d7;
+  color: #8a2f4a;
+  border-radius: 999px;
+  padding: 0.45rem 0.5rem 0.45rem 1.1rem;
+  font-weight: 700;
+  box-shadow: var(--shadow);
+}
+
 .reconnect {
   position: fixed;
   left: 50%;

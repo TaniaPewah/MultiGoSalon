@@ -36,6 +36,7 @@ export const RECONNECT_GRACE_MS = 30_000;
 
 export function registerSockets(io: IO, opts?: { reconnectGraceMs?: number; store?: SalonStore }) {
   const reconnectGraceMs = opts?.reconnectGraceMs ?? RECONNECT_GRACE_MS;
+  const serverId = crypto.randomUUID();
   const store = opts?.store;
   const sessions = new Map<string, Session>();
   const socketToPlayer = new Map<string, string>();
@@ -219,7 +220,7 @@ export function registerSockets(io: IO, opts?: { reconnectGraceMs?: number; stor
         profiles.set(playerId, existing.player);
         salon.updateInfo(existing.player);
         const resume = resumeFor(socket, playerId, existing);
-        socket.emit('session:ready', { player: existing.player, resume, reconnectGraceMs });
+        socket.emit('session:ready', { player: existing.player, resume, reconnectGraceMs, serverId });
         broadcastSalon();
         return;
       }
@@ -248,7 +249,7 @@ export function registerSockets(io: IO, opts?: { reconnectGraceMs?: number; stor
       sessions.set(playerId, session);
       attachSocket(socket, playerId, session);
       salon.join(player);
-      socket.emit('session:ready', { player, resume: 'salon', reconnectGraceMs });
+      socket.emit('session:ready', { player, resume: 'salon', reconnectGraceMs, serverId });
       broadcastSalon();
     });
 

@@ -39,6 +39,8 @@ interface Store {
   toasts: Toast[];
   /** Epoch ms when the server grace hold ends, or null while the socket is up. */
   reconnectUntil: number | null;
+  /** True after a new process replaces a server that still had this client's game. */
+  restarted: boolean;
   actions: {
     join: (name: string, character: Character) => void;
     moveTo: (x: number, y: number) => void;
@@ -57,6 +59,7 @@ interface Store {
     resetProblem: () => void;
     closePractice: () => void;
     dismissToast: (id: number) => void;
+    dismissRestart: () => void;
   };
 }
 
@@ -65,6 +68,7 @@ const StoreContext = createContext<Store | null>(null);
 const PLAYER_ID_KEY = 'multigo:playerId';
 const NAME_KEY = 'multigo:name';
 const CHARACTER_KEY = 'multigo:character';
+const SERVER_ID_KEY = 'multigo:serverId';
 
 let toastId = 0;
 
@@ -108,6 +112,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [problems, setProblems] = useState<TsumegoSummary[]>([]);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [reconnectUntil, setReconnectUntil] = useState<number | null>(null);
+  const [restarted, setRestarted] = useState(false);
   const graceMsRef = useRef<number | null>(null);
   const lastGameRef = useRef<GameState | null>(null);
   const lastPracticeRef = useRef<PracticeState | null>(null);
@@ -135,9 +140,31 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       if (graceMs != null) setReconnectUntil(Date.now() + graceMs);
       pushToast('Connection lost. Reconnecting…', 'info');
     };
-    const onReady = ({ player, resume, reconnectGraceMs }: { player: PlayerInfo; resume: SessionResume; reconnectGraceMs: number }) => {
+    const onReady = ({
+      player,
+      resume,
+      reconnectGraceMs,
+      serverId,
+    }: {
+      player: PlayerInfo;
+      resume: SessionResume;
+      reconnectGraceMs: number;
+      serverId: string;
+    }) => {
       graceMsRef.current = reconnectGraceMs;
       setMe(player);
+      const previousServer = localStorage.getItem(SERVER_ID_KEY);
+      const gameGone = previousServer != null && previousServer !== serverId && lastGameRef.current != null;
+      localStorage.setItem(SERVER_ID_KEY, serverId);
+      if (gameGone) {
+        setReconnectUntil(null);
+        setToasts([]);
+        setRestarted(true);
+        lastGameRef.current = null;
+        setGame(null);
+        setView('salon');
+        return;
+      }
       if (resume === 'game' || resume === 'spectate') {
         setView('game');
       } else if (resume === 'practice') {
@@ -322,11 +349,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         setView('salon');
       },
       dismissToast: (id) => setToasts((t) => t.filter((x) => x.id !== id)),
+      dismissRestart: () => setRestarted(false),
     }),
     [me],
   );
 
-  const value: Store = { view, connected, me, salon, queue, game, practice, problems, toasts, reconnectUntil, actions };
+  const value: Store = { view, connected, me, salon, queue, game, practice, problems, toasts, reconnectUntil, restarted, actions };
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }
 

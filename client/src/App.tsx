@@ -24,12 +24,26 @@ function ReconnectBanner() {
   );
 }
 
+function RestartNotice() {
+  const { restarted, actions } = useStore();
+  if (!restarted) return null;
+  return (
+    <div className="restart" data-testid="restart-notice" role="status">
+      The server restarted. This game is gone.
+      <button className="btn btn--ghost" type="button" onClick={actions.dismissRestart} data-testid="restart-dismiss">
+        OK
+      </button>
+    </div>
+  );
+}
+
 export function App() {
   const { view, toasts, actions } = useStore();
 
   return (
     <div className="app">
       <ReconnectBanner />
+      <RestartNotice />
       {view === 'login' && <LoginView />}
       {view === 'salon' && <SalonView />}
       {view === 'game' && <GameView />}
